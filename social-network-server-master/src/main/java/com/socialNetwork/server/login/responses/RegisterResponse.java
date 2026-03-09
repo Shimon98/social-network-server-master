@@ -1,17 +1,30 @@
 package com.socialNetwork.server.login.responses;
 
 public class RegisterResponse {
-    private boolean successes;
+    private boolean success;
+    private String message;
 
-    public RegisterResponse(boolean successes) {
-        this.successes = successes;
+    public RegisterResponse() {
     }
 
-    public boolean isSuccesses() {
-        return successes;
+    public RegisterResponse(String message, boolean success) {
+        this.message = message;
+        this.success = success;
     }
 
-    public void setSuccesses(boolean successes) {
-        this.successes = successes;
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
