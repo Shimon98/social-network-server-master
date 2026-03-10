@@ -1,10 +1,27 @@
 package com.socialNetwork.server.login.validators;
 
+import com.socialNetwork.server.login.requests.LoginRequest;
 import com.socialNetwork.server.login.requests.RegisterRequest;
 
 public class AuthValidator {
 
     private AuthValidator() {
+    }
+
+    public static String validateLoginRequest(LoginRequest request){ //רגיסטר ולוגין ולידציה דומה צריכה לעשות מחלקת ולידציה כללית אח"כ
+        if (request == null) {
+            return "Request is empty";
+        }
+
+        if (!isValidUsername(request.getUsername())) {
+            return "Invalid username";
+        }
+
+        if (!isValidPassword(request.getPassword())) {
+            return "Invalid password";
+        }
+
+        return null;
     }
 
     public static String validateRegisterRequest(RegisterRequest request) {

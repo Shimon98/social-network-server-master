@@ -23,7 +23,9 @@ public class AuthService {
         String validationError = AuthValidator.validateLoginRequest(request);
 
         if (validationError != null) {
-            return new LoginResponse(false, validationError, null, null);
+            return new LoginResponse(false,
+                    validationError,
+                    null, null);
         }
         User user = dbManager.findUserByUsername(request.getUsername());
 
@@ -35,10 +37,13 @@ public class AuthService {
                 request.getPassword()
         ).equals(user.getPasswordHash());
 
+        if (!passwordMatches){
+            return new LoginResponse(false,"One or more of your credentials is wrong", null,null);
+        }
+        String accessToken = "";
+        String refreshToken = ""; //שמתי את זה פה כדי לזכור שבעתיד צריך לגנרט את שתי אלו
 
-
-
-
+        return new LoginResponse(true, "Login success" , accessToken, refreshToken);
     }
 
     public RegisterResponse register(RegisterRequest request) {

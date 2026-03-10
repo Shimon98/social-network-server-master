@@ -40,6 +40,7 @@ public class DBManager {
             throw new RuntimeException(e);
         }
     }
+
     public boolean userExists(String username, String email) {
         String sql = "SELECT COUNT(*) FROM users WHERE username = ? OR email = ?";
         try {
@@ -54,5 +55,25 @@ public class DBManager {
             throw new RuntimeException(e);
         }
         return false;
+    }
+
+    public User findUserByUsername(String username) {
+        String sql = "SELECT id, username, email, password_hash FROM users WHERE username = ?";
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sql);
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setEmail(resultSet.getString("email"));
+                user.setPasswordHash(resultSet.getString("password_hash"));
+                return user;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 }
