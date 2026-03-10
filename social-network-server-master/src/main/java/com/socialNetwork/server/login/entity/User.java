@@ -1,6 +1,6 @@
-package com.socialNetwork.server.login.model;
+package com.socialNetwork.server.login.entity;
 
-public class User {
+public class User { //מחלקת יוזר של מה שנשמר בDB בפועל (על פניו נראה דומה מאוד לREGISTER REQUEST אך הם ממלאים תפקידים שונים
     private int id;
     private String username;
     private String email;

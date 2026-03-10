@@ -1,18 +1,20 @@
 package com.socialNetwork.server.login.responses;
 
-public class LoginResponse extends BasicResponse{
-    private String token;
+public class LoginResponse extends BasicResponse {
+    private String accessToken;
+    private String refreshToken;
 
-    public LoginResponse(boolean successes, Integer errorCode, String token) {
-        super(successes, errorCode);
-        this.token = token;
+    public LoginResponse(boolean success, String message, String accessToken, String refreshToken) {
+        super(success, message);
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
-    public String getToken() {
-        return token;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 }

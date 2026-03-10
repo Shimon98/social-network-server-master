@@ -1,6 +1,6 @@
 package com.socialNetwork.server.login.validators;
 
-import com.socialNetwork.server.login.responses.RegisterRequest;
+import com.socialNetwork.server.login.requests.RegisterRequest;
 
 public class AuthValidator {
 

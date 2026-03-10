@@ -1,7 +1,7 @@
 package com.socialNetwork.server.login.dataBase;
 
 import com.socialNetwork.server.login.config.DatabaseConfig;
-import com.socialNetwork.server.login.model.User;
+import com.socialNetwork.server.login.entity.User;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
