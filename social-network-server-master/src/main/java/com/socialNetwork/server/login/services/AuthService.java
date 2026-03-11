@@ -46,6 +46,12 @@ public class AuthService {
         return new LoginResponse(true, "Login success" , accessToken, refreshToken);
     }
 
+
+
+
+
+
+
     public RegisterResponse register(RegisterRequest request) {
         String validationError = AuthValidator.validateRegisterRequest(request);
 
@@ -78,6 +84,10 @@ public class AuthService {
             return new RegisterResponse(e.getMessage(), false);
         }
     }
+
+
+
+
 
     private User createUserFromRequest(RegisterRequest request, String passwordHash) {
         User user = new User();
