@@ -53,7 +53,7 @@ public class AuthService {
             return new RegisterResponse(validationError, false);
         }
 
-        try {
+        try {//לעשות שיפצור
             if (dbManager.userExists(request.getUsername(), request.getEmail())) {
                 return new RegisterResponse("User exists", false);
             }
