@@ -1,0 +1,32 @@
+1000–1099 ולידציה כללית
+
+2000–2099 הרשמה
+
+3000–3099 לוגין
+
+5000–5099 שגיאות שרת
+
+
+
+# Error Codes Documentation
+
+## General Validation
+- 1000 = Invalid request
+- 1001 = Missing username
+- 1002 = Invalid username
+- 1003 = Missing password
+- 1004 = Invalid password
+- 1005 = Missing email
+- 1006 = Invalid email
+
+## Registration
+- 2000 = Username already exists
+- 2001 = Email already exists
+- 2002 = User already exists
+- 4000 = Registration failed
+
+## Authentication
+- 3000 = Invalid credentials
+
+## Server
+- 5000 = Internal server error

@@ -2,87 +2,90 @@ package com.socialNetwork.server.login.validators;
 
 import com.socialNetwork.server.login.requests.LoginRequest;
 import com.socialNetwork.server.login.requests.RegisterRequest;
+import com.socialNetwork.server.login.utils.Constants;
+import com.socialNetwork.server.login.utils.Errors;
 
-public class AuthValidator {
+public final class AuthValidator {
 
     private AuthValidator() {
     }
 
-    public static String validateLoginRequest(LoginRequest request){ //רגיסטר ולוגין ולידציה דומה צריכה לעשות מחלקת ולידציה כללית אח"כ
+    public static Integer validateLoginRequest(LoginRequest request) {
         if (request == null) {
-            return "Request is empty";
+            return Errors.INVALID_REQUEST;
         }
-
-        if (!isValidUsername(request.getUsername())) {
-            return "Invalid username";
+        Integer errorCode = validateUsername(request.getUsername());
+        if (errorCode != null) {
+            return errorCode;
         }
+        return validatePassword(request.getPassword());
+    }
 
-        if (!isValidPassword(request.getPassword())) {
-            return "Invalid password";
+    public static Integer validateRegisterRequest(RegisterRequest request) {
+        if (request == null) {
+            return Errors.INVALID_REQUEST;
         }
+        Integer errorCode = validateUsername(request.getUsername());
+        if (errorCode != null) {
+            return errorCode;
+        }
+        errorCode = validateEmail(request.getEmail());
+        if (errorCode != null) {
+            return errorCode;
+        }
+        return validatePassword(request.getPassword());
+    }
 
+    private static Integer validateUsername(String username) {
+        Integer missingFieldError = validateRequiredField(username, Errors.MISSING_USERNAME);
+        if (missingFieldError != null) {
+            return missingFieldError;
+        }
+        String normalizedUsername = username.trim();
+        if (!isLengthInRange(normalizedUsername, Constants.MIN_USERNAME_LENGTH,
+                Constants.MAX_USERNAME_LENGTH)) {
+            return Errors.INVALID_USERNAME;
+        }
         return null;
     }
 
-    public static String validateRegisterRequest(RegisterRequest request) {
-        if (request == null) {
-            return "Request is empty";
+    private static Integer validateEmail(String email) {
+        Integer missingFieldError = validateRequiredField(email, Errors.MISSING_EMAIL);
+        if (missingFieldError != null) {
+            return missingFieldError;
         }
-
-        if (!isValidUsername(request.getUsername())) {
-            return "Invalid username";
+        String normalizedEmail = email.trim();
+        if (!normalizedEmail.contains(Constants.EMAIL_AT_SIGN) ||
+                !normalizedEmail.contains(Constants.EMAIL_DOT)) {
+            return Errors.INVALID_EMAIL;
         }
-
-        if (!isValidEmail(request.getEmail())) {
-            return "Invalid email";
-        }
-
-        if (!isValidPassword(request.getPassword())) {
-            return "Invalid password";
-        }
-
         return null;
     }
 
-    private static boolean isValidUsername(String username) {
-        if (username == null) {
-            return false;
+    private static Integer validatePassword(String password) {
+        Integer missingFieldError = validateRequiredField(password, Errors.MISSING_PASSWORD);
+        if (missingFieldError != null) {
+            return missingFieldError;
         }
-
-        username = username.trim();
-
-        if (username.isEmpty()) {
-            return false;
+        String normalizedPassword = password.trim();
+        if (normalizedPassword.length() < Constants.MIN_PASSWORD_LENGTH) {
+            return Errors.INVALID_PASSWORD;
         }
-
-        return username.length() >=  3 && username.length() <= 20;
+        return null;
     }
 
-    private static boolean isValidEmail(String email) {
-        if (email == null) {
-            return false;
+    private static Integer validateRequiredField(String value, int missingErrorCode) {
+        if (value == null) {
+            return missingErrorCode;
         }
-
-        email = email.trim();
-
-        if (email.isEmpty()) {
-            return false;
+        if (value.trim().isEmpty()) {
+            return missingErrorCode;
         }
-
-        return email.contains("@") && email.contains(".");
+        return null;
     }
 
-    private static boolean isValidPassword(String password) {
-        if (password == null) {
-            return false;
-        }
 
-        password = password.trim();
-
-        if (password.isEmpty()) {
-            return false;
-        }
-
-        return password.length() >= 6;
+    private static boolean isLengthInRange(String value, int minLength, int maxLength) {
+        return value.length() >= minLength && value.length() <= maxLength;
     }
 }

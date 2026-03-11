@@ -1,9 +1,8 @@
 package com.socialNetwork.server.login.responses;
 
-public class RegisterResponse extends BasicResponse { //מחזיר תשובה אם ניסיו ההרשמה עבר בהצלחה או נכשל
+public class RegisterResponse extends BasicResponse {
 
-    public RegisterResponse(String message, boolean success) {
-        super(success, message);
+    public RegisterResponse(boolean success, Integer errorCode) {
+        super(success, errorCode);
     }
-
 }

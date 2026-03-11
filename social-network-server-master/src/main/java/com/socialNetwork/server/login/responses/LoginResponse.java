@@ -4,8 +4,8 @@ public class LoginResponse extends BasicResponse {
     private String accessToken;
     private String refreshToken;
 
-    public LoginResponse(boolean success, String message, String accessToken, String refreshToken) {
-        super(success, message);
+    public LoginResponse(boolean success, Integer errorCode, String accessToken, String refreshToken) {
+        super(success, errorCode);
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
