@@ -24,8 +24,8 @@ public class AuthController {
         return authService.register(request);
     }
 
-    @RequestMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request){
-        return authService.login(request);
-    }
+//    @RequestMapping("/login")
+//    public LoginResponse login(@RequestBody LoginRequest request){
+//        return authService.login(request);
+//    }
 }
