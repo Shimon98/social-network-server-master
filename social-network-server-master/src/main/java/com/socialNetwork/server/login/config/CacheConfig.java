@@ -15,18 +15,14 @@ public class CacheConfig {
     public CacheManager cacheManager() {
 
         CaffeineCacheManager manager =
-                new CaffeineCacheManager(
-                        "categories",
-                        "productsByCategory",
-                        "users"
+                new CaffeineCacheManager("categories",
+                        "productsByCategory", "users"
                 );
 
         manager.setCaffeine(
-                Caffeine.newBuilder()
-                        .expireAfterWrite(10, TimeUnit.MINUTES)
+                Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES)
                         .maximumSize(1000)
         );
-
         return manager;
     }
 }

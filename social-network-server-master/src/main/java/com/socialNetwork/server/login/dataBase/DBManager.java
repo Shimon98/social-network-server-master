@@ -2,7 +2,12 @@ package com.socialNetwork.server.login.dataBase;
 
 import com.socialNetwork.server.login.config.DatabaseConfig;
 import com.socialNetwork.server.login.entity.User;
+import com.socialNetwork.server.login.services.AuthService;
+import com.socialNetwork.server.login.utils.ConstantLogger;
+import com.socialNetwork.server.login.utils.Constants;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -12,6 +17,7 @@ import java.sql.SQLException;
 
 @Component
 public class DBManager {
+    private static final Logger logger = LoggerFactory.getLogger(DBManager.class);
 
     private Connection connection;
 
@@ -19,11 +25,9 @@ public class DBManager {
     public void connect() {
         try {
             this.connection = DatabaseConfig.getConnection();
-            System.out.println("DB connected successfully");
+            logger.info(ConstantLogger.LOG_DB_CONNECTED);
         } catch (SQLException e) {
-            System.out.println("Failed to create db connection");
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            logger.error(ConstantLogger.LOG_DB_FAILED_CONNECTED,e.getMessage(),e);
         }
     }
 
@@ -37,8 +41,9 @@ public class DBManager {
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage());
         }
+        return false;
     }
 
     public boolean userExists(String username, String email) {
@@ -52,7 +57,7 @@ public class DBManager {
                 return resultSet.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage());
         }
         return false;
     }
@@ -72,7 +77,7 @@ public class DBManager {
                 return user;
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage());
         }
         return null;
     }

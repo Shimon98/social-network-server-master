@@ -5,7 +5,7 @@ import com.socialNetwork.server.login.requests.RegisterRequest;
 import com.socialNetwork.server.login.utils.Constants;
 import com.socialNetwork.server.login.utils.Errors;
 
-public final class AuthValidator {
+public class AuthValidator {
 
     private AuthValidator() {
     }
