@@ -22,8 +22,6 @@ public class BasicRequest {
 
 
 
-
-
     public String getUsername() {
         return username;
     }

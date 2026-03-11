@@ -55,7 +55,7 @@ public class AuthValidator {
             return false;
         }
 
-        return username.length() >= 3 && username.length() <= 20;
+        return username.length() >=  3 && username.length() <= 20;
     }
 
     private static boolean isValidEmail(String email) {
