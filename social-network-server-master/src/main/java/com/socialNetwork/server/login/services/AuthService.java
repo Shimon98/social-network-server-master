@@ -5,19 +5,17 @@ import com.socialNetwork.server.login.entity.RefreshToken;
 import com.socialNetwork.server.login.entity.User;
 import com.socialNetwork.server.login.hashing.PasswordHashUtil;
 import com.socialNetwork.server.login.requests.LoginRequest;
-import com.socialNetwork.server.login.requests.RefreshRequest;
 import com.socialNetwork.server.login.requests.RegisterRequest;
 import com.socialNetwork.server.login.responses.BasicResponse;
-import com.socialNetwork.server.login.responses.LoginResponse;
-import com.socialNetwork.server.login.responses.RefreshResponse;
+import com.socialNetwork.server.login.responses.LoginTokens;
 import com.socialNetwork.server.login.responses.RegisterResponse;
 import com.socialNetwork.server.login.security.JwtService;
 import com.socialNetwork.server.login.utils.ConstantLogger;
 import com.socialNetwork.server.login.utils.Errors;
 import com.socialNetwork.server.login.validators.AuthValidator;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
@@ -31,15 +29,13 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public LoginResponse login(LoginRequest request) {
+    public LoginTokens login(LoginRequest request) {
         Integer validationErrorCode = AuthValidator.validateLoginRequest(request);
         if (validationErrorCode != null) {
             return loginFailure(validationErrorCode);
         }
-
         String normalizedUsername = request.getUsername().trim();
         String normalizedPassword = request.getPassword().trim();
-
         try {
             User user = dbManager.findUserByUsername(normalizedUsername);
             if (user == null) {
@@ -62,7 +58,7 @@ public class AuthService {
                 return loginFailure(Errors.INTERNAL_SERVER_ERROR);
             }
 
-            return new LoginResponse(true, null, accessToken, refreshTokenValue);
+            return new LoginTokens(true, null, accessToken, refreshTokenValue);
 
         } catch (Exception e) {
             logger.error(ConstantLogger.LOG_LOGIN_FAILED_USERNAME, normalizedUsername, e);
@@ -75,11 +71,9 @@ public class AuthService {
         if (validationErrorCode != null) {
             return registerFailure(validationErrorCode);
         }
-
         String normalizedUsername = request.getUsername().trim();
         String normalizedEmail = request.getEmail().trim();
         String normalizedPassword = request.getPassword().trim();
-
         try {
             if (dbManager.userExists(normalizedUsername, normalizedEmail)) {
                 return registerFailure(Errors.USER_ALREADY_EXISTS);
@@ -92,50 +86,53 @@ public class AuthService {
             if (!inserted) {
                 return registerFailure(Errors.REGISTRATION_FAILED);
             }
-
             return new RegisterResponse(true, null);
-
         } catch (Exception e) {
             logger.error(ConstantLogger.LOG_REGISTER_UNEXPECTED_ERROR, normalizedUsername, e);
             return registerFailure(Errors.INTERNAL_SERVER_ERROR);
         }
     }
-    public RefreshResponse refreshToken(RefreshRequest request) {
 
-        String token = request.getRefreshToken();
-
+    public String refreshAccessToken(String refreshTokenValue) {
         try {
-
-            if (!jwtService.isTokenValid(token)) {
-                return new RefreshResponse(false, Errors.INVALID_TOKEN, null);
+            if (refreshTokenValue == null || refreshTokenValue.isBlank()) {
+                return null;
             }
 
-            RefreshToken savedToken = dbManager.findRefreshToken(token);
+            if (!jwtService.isTokenValid(refreshTokenValue)) {
+                return null;
+            }
 
+            RefreshToken savedToken = dbManager.findRefreshToken(refreshTokenValue);
             if (savedToken == null) {
-                return new RefreshResponse(false, Errors.INVALID_TOKEN, null);
+                return null;
             }
 
-            Long userId = jwtService.extractUserId(token);
-            String username = jwtService.extractUsername(token);
+            if (!"refresh".equals(jwtService.extractTokenType(refreshTokenValue))) {
+                return null;
+            }
 
-            String newAccessToken = jwtService.generateAccessToken(userId, username);
+            Long userId = jwtService.extractUserId(refreshTokenValue);
+            String username = jwtService.extractUsername(refreshTokenValue);
 
-            return new RefreshResponse(true, null, newAccessToken);
+            return jwtService.generateAccessToken(userId, username);
 
         } catch (Exception e) {
-
             logger.error(ConstantLogger.LOG_REFRESH_TOKEN_ERROR, e);
-
-            return new RefreshResponse(false, Errors.INTERNAL_SERVER_ERROR, null);
+            return null;
         }
     }
 
-    public BasicResponse logout(RefreshRequest request) {
-        boolean deleted = dbManager.deleteRefreshToken(request.getRefreshToken());
-        if (!deleted) {
-            return new BasicResponse(false, Errors.INVALID_TOKEN);
+    public BasicResponse logout(String refreshTokenValue) {
+        if (refreshTokenValue == null || refreshTokenValue.isBlank()) {
+            return new BasicResponse(true, null);
         }
+
+        boolean deleted = dbManager.deleteRefreshToken(refreshTokenValue);
+        if (!deleted) {
+            return new BasicResponse(true, null);
+        }
+
         return new BasicResponse(true, null);
     }
 
@@ -148,8 +145,8 @@ public class AuthService {
         return PasswordHashUtil.hashPassword(username, password);
     }
 
-    private LoginResponse loginFailure(Integer errorCode) {
-        return new LoginResponse(false, errorCode, null, null);
+    private LoginTokens loginFailure(Integer errorCode) {
+        return new LoginTokens(false, errorCode, null, null);
     }
 
     private RegisterResponse registerFailure(Integer errorCode) {
