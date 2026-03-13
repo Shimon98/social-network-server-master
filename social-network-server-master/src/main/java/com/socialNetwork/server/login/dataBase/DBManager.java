@@ -1,10 +1,9 @@
 package com.socialNetwork.server.login.dataBase;
 
 import com.socialNetwork.server.login.config.DatabaseConfig;
+import com.socialNetwork.server.login.entity.RefreshToken;
 import com.socialNetwork.server.login.entity.User;
-import com.socialNetwork.server.login.services.AuthService;
 import com.socialNetwork.server.login.utils.ConstantLogger;
-import com.socialNetwork.server.login.utils.Constants;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,7 @@ public class DBManager {
             this.connection = DatabaseConfig.getConnection();
             logger.info(ConstantLogger.LOG_DB_CONNECTED);
         } catch (SQLException e) {
-            logger.error(ConstantLogger.LOG_DB_FAILED_CONNECTED,e.getMessage(),e);
+            logger.error(ConstantLogger.LOG_DB_FAILED_CONNECTED, e.getMessage(), e);
         }
     }
 
@@ -80,5 +79,71 @@ public class DBManager {
             logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage());
         }
         return null;
+    }
+
+    public boolean saveRefreshToken(RefreshToken refreshToken) {
+        String sql = "INSERT INTO refresh_tokens (user_id, token, expires_at, created_at) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sql);
+            statement.setInt(1, refreshToken.getUserId());
+            statement.setString(2, refreshToken.getToken());
+            statement.setLong(3, refreshToken.getExpiresAt());
+            statement.setLong(4, refreshToken.getCreatedAt());
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean deleteRefreshTokensByUserId(Integer userId) {
+        String sql = "DELETE FROM refresh_tokens WHERE user_id = ?";
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage());
+        }
+        return false;
+    }
+
+    public RefreshToken findRefreshToken(String token) {
+        String sql = "SELECT id, user_id, token, expires_at, created_at FROM refresh_tokens WHERE token = ?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, token);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                RefreshToken refreshToken = new RefreshToken();
+                refreshToken.setId(resultSet.getInt("id"));
+                refreshToken.setUserId(resultSet.getInt("user_id"));
+                refreshToken.setToken(resultSet.getString("token"));
+                refreshToken.setExpiresAt(resultSet.getLong("expires_at"));
+                refreshToken.setCreatedAt(resultSet.getLong("created_at"));
+                return refreshToken;
+            }
+        } catch (SQLException e) {
+            logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean deleteRefreshToken(String token) {
+        String sql = "DELETE FROM refresh_tokens WHERE token = ?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, token);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage());
+        }
+        return false;
     }
 }

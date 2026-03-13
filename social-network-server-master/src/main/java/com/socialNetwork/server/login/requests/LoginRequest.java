@@ -2,8 +2,6 @@ package com.socialNetwork.server.login.requests;
 
 public class LoginRequest extends BasicRequest{
 
-
-
     public LoginRequest() {
     }
 

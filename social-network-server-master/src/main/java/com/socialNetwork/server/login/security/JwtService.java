@@ -17,7 +17,7 @@ public class JwtService {
         this.jwtConfig = jwtConfig;
     }
 
-    private SecretKey getSigningKey() { //פונקציה שממירה מחרוזת לאובייקט KEY שאיתו JWT משתמש לחתימה
+    private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getSecret());
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -29,6 +29,21 @@ public class JwtService {
         return Jwts.builder()
                 .subject(username)
                 .claim("userId", userId)
+                .claim("type", "access")
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String generateRefreshToken(Long userId, String username) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + jwtConfig.getRefreshExpiration());
+
+        return Jwts.builder()
+                .subject(username)
+                .claim("userId", userId)
+                .claim("type", "refresh")
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(getSigningKey())
@@ -43,8 +58,24 @@ public class JwtService {
         return extractAllClaims(token).get("userId", Long.class);
     }
 
+    public String extractTokenType(String token) {
+        return extractAllClaims(token).get("type", String.class);
+    }
+
+    public Long extractExpirationTime(String token) {
+        return extractAllClaims(token).getExpiration().getTime();
+    }
+
     public boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private Claims extractAllClaims(String token) {

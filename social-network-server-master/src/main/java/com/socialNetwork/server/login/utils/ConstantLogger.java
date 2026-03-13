@@ -9,4 +9,7 @@ public class ConstantLogger {
     public static final String LOG_DB_CONNECTED = "DB connected successfully";
     public static final String LOG_DB_FAILED_CONNECTED = "Failed to create DB connection";
     public static final String LOG_DB_UNEXPECTED_ERROR = "Database error";
+
+    public static final String LOG_REFRESH_TOKEN_ERROR = "Refresh token error";
+
 }

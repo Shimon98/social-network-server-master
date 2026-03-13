@@ -20,4 +20,6 @@ public class Errors {
 
     public static final int REGISTRATION_FAILED = 4000;
     public static final int INTERNAL_SERVER_ERROR = 5000;
+
+    public static final int INVALID_TOKEN = 6000;
 }

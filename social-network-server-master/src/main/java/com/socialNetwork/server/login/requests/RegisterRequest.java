@@ -1,9 +1,6 @@
 package com.socialNetwork.server.login.requests;
 
-public class RegisterRequest extends BasicRequest { //מחלקה שמקבלת מידע מהלקוח בשלב זה נתונים יבשים הפרטים האלו מועברים לאוטנטיקציה וולידציה לפני שנוצר אובייקט של יוזר
-    private String username;
-    private String email;
-    private String password;
+public class RegisterRequest extends BasicRequest {
 
     public RegisterRequest() {
     }

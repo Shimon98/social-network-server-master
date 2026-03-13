@@ -1,8 +1,11 @@
 package com.socialNetwork.server.login.controllers;
 
 import com.socialNetwork.server.login.requests.LoginRequest;
+import com.socialNetwork.server.login.requests.RefreshRequest;
+import com.socialNetwork.server.login.responses.BasicResponse;
 import com.socialNetwork.server.login.responses.LoginResponse;
 import com.socialNetwork.server.login.requests.RegisterRequest;
+import com.socialNetwork.server.login.responses.RefreshResponse;
 import com.socialNetwork.server.login.responses.RegisterResponse;
 import com.socialNetwork.server.login.services.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,8 +27,18 @@ public class AuthController {
         return authService.register(request);
     }
 
-    @RequestMapping("/login")
+    @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request){
         return authService.login(request);
+    }
+
+    @PostMapping("/refresh")
+    public RefreshResponse refresh(@RequestBody RefreshRequest request) {
+        return authService.refreshToken(request);
+    }
+
+    @PostMapping("/logout")
+    public BasicResponse logout(@RequestBody RefreshRequest request) {
+        return authService.logout(request);
     }
 }

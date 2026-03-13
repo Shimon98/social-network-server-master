@@ -19,9 +19,6 @@ public class BasicRequest {
         this.password = password;
     }
 
-
-
-
     public String getUsername() {
         return username;
     }
