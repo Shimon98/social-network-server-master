@@ -84,7 +84,6 @@ public class AuthValidator {
         return null;
     }
 
-
     private static boolean isLengthInRange(String value, int minLength, int maxLength) {
         return value.length() >= minLength && value.length() <= maxLength;
     }

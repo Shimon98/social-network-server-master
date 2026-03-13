@@ -116,9 +116,7 @@ public class DBManager {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, token);
-
             ResultSet resultSet = statement.executeQuery();
-
             if (resultSet.next()) {
                 RefreshToken refreshToken = new RefreshToken();
                 refreshToken.setId(resultSet.getInt("id"));
