@@ -1,72 +1,3 @@
-//package com.socialNetwork.server.login.services;
-//
-//import com.socialNetwork.server.login.dataBase.DBManager;
-//import com.socialNetwork.server.login.entity.User;
-//import com.socialNetwork.server.login.hashing.PasswordHashUtil;
-//import com.socialNetwork.server.login.requests.RegisterRequest;
-//import com.socialNetwork.server.login.responses.RegisterResponse;
-//import com.socialNetwork.server.login.utils.ConstantLogger;
-//import com.socialNetwork.server.login.utils.Errors;
-//import com.socialNetwork.server.login.validators.AuthValidator;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//public class RegisterService {
-//
-//    private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
-//
-//    private final DBManager dbManager;
-//
-//    public RegisterService(DBManager dbManager) {
-//        this.dbManager = dbManager;
-//    }
-//
-//    public RegisterResponse register(RegisterRequest request) {
-//        System.out.println("Register request received");
-//        Integer validationErrorCode = AuthValidator.validateRegisterRequest(request);
-//        if (validationErrorCode != null) {
-//            return registerFailure(validationErrorCode);
-//        }
-//
-//        String normalizedUsername = request.getUsername().trim();
-//        String normalizedEmail = request.getEmail().trim();
-//        String normalizedPassword = request.getPassword().trim();
-//
-//        try {
-//            if (dbManager.userExists(normalizedUsername, normalizedEmail)) {
-//                return registerFailure(Errors.USER_ALREADY_EXISTS);
-//            }
-//
-//            String passwordHash = hashPassword(normalizedUsername, normalizedPassword);
-//            User user = createUser(normalizedUsername, normalizedEmail, passwordHash);
-//
-//            boolean inserted = dbManager.createUserOnDb(user);
-//            if (!inserted) {
-//                return registerFailure(Errors.REGISTRATION_FAILED);
-//            }
-//
-//            return new RegisterResponse(true, null);
-//
-//        } catch (Exception e) {
-//            logger.error(ConstantLogger.LOG_REGISTER_UNEXPECTED_ERROR, normalizedUsername, e);
-//            return registerFailure(Errors.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    private String hashPassword(String username, String password) {
-//        return PasswordHashUtil.hashPassword(username, password);
-//    }
-//
-//    private User createUser(String username, String email, String passwordHash) {
-//        User user = new User();
-//        user.setUsername(username);
-//        user.setEmail(email);
-//        user.setPasswordHash(passwordHash);
-//        return user;
-//    }
-
 
 package com.socialNetwork.server.login.services;
 
@@ -93,6 +24,7 @@ public class RegisterService {
         this.authCommonService = authCommonService;
     }
     public RegisterResponse register(RegisterRequest request) {
+        // במתודה הזאת צריכה לקבל טוקן הרשמה ובקשה במקביל מהטוקן צריך להוציא את המייל לא צריך לבצע עליו עוד פעולות על המייל ואז נמשיך רגיל
         Integer validationErrorCode = AuthValidator.validateRegisterRequest(request);
         if (validationErrorCode != null) {
             return registerFailure(validationErrorCode);
@@ -120,6 +52,9 @@ public class RegisterService {
         User user = authCommonService.createUser(normalizedUsername, normalizedEmail, passwordHash);
         return dbManager.createUserOnDb(user);
     }
+
+    // צריך מתודה שמקבלת מייל ואז בודקת עם הוא במערכת עם לא צריך לשהשתמש במייל מנגר לשלוח הודעה בהחזרת תשובה לצד לקוח לשלוח לו הודעה שיש לוד קוד ממתין במייל
+    // מתודה  שמקבלת קוד אימות ומייל מהצד לקוח אחרי בדיקות שהקוד אימות  תקין היא שולחת טוקן ממתין בהרשמה ששמור בו המייל של אותו משתמש
 
 
     private RegisterResponse registerFailure(Integer errorCode) {

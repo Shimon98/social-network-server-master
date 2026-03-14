@@ -1,5 +1,6 @@
 package com.socialNetwork.server.login.controllers;
 
+import com.socialNetwork.server.login.email.EmailManager;
 import com.socialNetwork.server.login.email.EmailService;
 import com.socialNetwork.server.login.requests.BasicRequest;
 import com.socialNetwork.server.login.responses.BasicResponse;
@@ -20,7 +21,7 @@ public class TestController {
     private final JwtService jwtService;
     private final AuthCookieService authCookieService;
     @Autowired
-    private EmailService emailService;
+    private EmailManager emailService;
 
     public TestController(JwtService jwtService, AuthCookieService authCookieService) {
         this.jwtService = jwtService;
@@ -50,9 +51,8 @@ public class TestController {
     }
 
     @GetMapping("/test2")
-    public String test2(@RequestParam String email,
-                        @RequestParam String code) {
-        emailService.sendLoginCodeEmail(email, code);
+    public String test2(@RequestParam String email) {
+        emailService.sendLoginCode(email);
         return "email sent";
     }
 }//
