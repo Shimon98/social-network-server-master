@@ -22,7 +22,7 @@ public class VerificationCodeService {
     }
 
     public VerificationCode crateLoginCode(String email){
-       return crateCode(email, TempCodePurpose.LOGIN_PURPOSE);
+        return crateCode(email, TempCodePurpose.LOGIN_PURPOSE);
     }
 
     public VerificationCode crateRegisterCode(String email){
@@ -34,17 +34,16 @@ public class VerificationCodeService {
     }
 
     public boolean ifCanUseRegisterCode(String email, String code){
-
         return ifCanUseCode(TempCodePurpose.REGISTER_PURPOSE , email, code );
     }
 
-    public VerificationCode getLoginCodFromCacheByEmail(String email){
-        return getCodeFromCache(TempCodePurpose.LOGIN_PURPOSE,email);
-
-    }
-    public VerificationCode getRegisterCodFromCacheByEmail(String email){
-        return getCodeFromCache(TempCodePurpose.REGISTER_PURPOSE,email);
-    }
+//    public VerificationCode getLoginCodFromCacheByEmail(String email){
+//        return getCodeFromCache(TempCodePurpose.LOGIN_PURPOSE,email);
+//
+//    }
+//    public VerificationCode getRegisterCodFromCacheByEmail(String email){
+//        return getCodeFromCache(TempCodePurpose.REGISTER_PURPOSE,email);
+//    }
 
     private VerificationCode crateCode(String email , TempCodePurpose purpose){
         VerificationCode verificationCode = new VerificationCode(purpose,email, generateCode());

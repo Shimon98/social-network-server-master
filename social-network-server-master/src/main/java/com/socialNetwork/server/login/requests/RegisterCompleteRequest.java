@@ -1,46 +1,39 @@
 package com.socialNetwork.server.login.requests;
 
-public class BasicRequest extends EmailRequest {
+public class RegisterCompleteRequest {
+
+    private String registrationToken;
     private String username;
-    private String email;
     private String password;
 
-    public BasicRequest() {
+    public RegisterCompleteRequest() {
     }
 
-    public BasicRequest(String username, String email, String password) {
-        super(email);
+    public RegisterCompleteRequest(String registrationToken, String username, String password) {
+        this.registrationToken = registrationToken;
         this.username = username;
         this.password = password;
     }
 
-    public BasicRequest(String username, String password ) {
-        this.username = username;
-        this.password = password;
+    public String getRegistrationToken() {
+        return registrationToken;
     }
-
-    public BasicRequest(String username) {
-        this.username = username;
-    }
-
-
-
-
 
     public String getUsername() {
         return username;
     }
 
-
     public String getPassword() {
         return password;
+    }
+
+    public void setRegistrationToken(String registrationToken) {
+        this.registrationToken = registrationToken;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
-
-
 
     public void setPassword(String password) {
         this.password = password;

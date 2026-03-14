@@ -1,13 +1,13 @@
 package com.socialNetwork.server.login.requests;
 
-public class SendRegisterCodeRequest {
+public class EmailRequest {
 
     private String email;
 
-    public SendRegisterCodeRequest() {
+    public EmailRequest() {
     }
 
-    public SendRegisterCodeRequest(String email) {
+    public EmailRequest(String email) {
         this.email = email;
     }
 
