@@ -3,10 +3,9 @@ package com.socialNetwork.server.login.controllers;
 import com.socialNetwork.server.login.requests.LoginRequest;
 import com.socialNetwork.server.login.requests.RegisterRequest;
 import com.socialNetwork.server.login.responses.BasicResponse;
-import com.socialNetwork.server.login.responses.LoginTokens;
-import com.socialNetwork.server.login.responses.RegisterResponse;
+import com.socialNetwork.server.login.responses.LoginResponse;
 import com.socialNetwork.server.login.services.AuthCookieService;
-import com.socialNetwork.server.login.services.AuthService;
+import com.socialNetwork.server.login.services.AuthManeger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,22 +15,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthManeger authManeger;
     private final AuthCookieService authCookieService;
 
-    public AuthController(AuthService authService, AuthCookieService authCookieService) {
-        this.authService = authService;
+    public AuthController(AuthManeger authManeger, AuthCookieService authCookieService) {
+        this.authManeger = authManeger;
         this.authCookieService = authCookieService;
     }
 
     @PostMapping("/register")
-    public RegisterResponse register(@RequestBody RegisterRequest request) {
-        return authService.register(request);
+    public BasicResponse register(@RequestBody RegisterRequest request) {
+        System.out.printf("Register request: %s", request.toString());
+        return authManeger.register(request);
     }
 
     @PostMapping("/login")
     public BasicResponse login(@RequestBody LoginRequest request, HttpServletResponse response) {
-        LoginTokens result = authService.login(request);
+        LoginResponse result = (LoginResponse) authManeger.login(request);
         if (!result.isSuccess()) {
             return new BasicResponse(false, result.getErrorCode());
         }
@@ -43,7 +43,7 @@ public class AuthController {
     @PostMapping("/refresh")
     public BasicResponse refresh(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = authCookieService.getRefreshTokenFromCookies(request);
-        String newAccessToken = authService.refreshAccessToken(refreshToken);
+        String newAccessToken = authManeger.refreshAccessToken(refreshToken);
         if (newAccessToken == null) {
             authCookieService.clearAuthCookies(response);
             return new BasicResponse(false, null);
@@ -55,7 +55,7 @@ public class AuthController {
     @PostMapping("/logout")
     public BasicResponse logout(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = authCookieService.getRefreshTokenFromCookies(request);
-        authService.logout(refreshToken);
+        authManeger.logout(refreshToken);
         authCookieService.clearAuthCookies(response);
         return new BasicResponse(true, null);
     }

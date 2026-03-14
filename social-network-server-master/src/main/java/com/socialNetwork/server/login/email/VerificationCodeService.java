@@ -29,11 +29,12 @@ public class VerificationCodeService {
         return crateCode(email, TempCodePurpose.REGISTER_PURPOSE);
     }
 
-    public boolean canUseLoginCode(String email, String code){
+    public boolean ifCanUseLoginCode(String email, String code){
         return ifCanUseCode(TempCodePurpose.LOGIN_PURPOSE , email, code );
     }
 
-    public boolean canUseRegisterCode(String email, String code){
+    public boolean ifCanUseRegisterCode(String email, String code){
+
         return ifCanUseCode(TempCodePurpose.REGISTER_PURPOSE , email, code );
     }
 
@@ -65,6 +66,7 @@ public class VerificationCodeService {
     }
 
     private boolean ifCanUseCode(TempCodePurpose purpose, String email, String code){
+        code= code.trim();
         boolean ifCanUseCode = false;
         VerificationCode codeFromCache = getCodeFromCache(purpose, email);
         if (codeFromCache==null){return false;}
