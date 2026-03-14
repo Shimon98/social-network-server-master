@@ -55,4 +55,4 @@ public class TestController {
         emailService.sendLoginCodeEmail(email, code);
         return "email sent";
     }
-}
+}//
