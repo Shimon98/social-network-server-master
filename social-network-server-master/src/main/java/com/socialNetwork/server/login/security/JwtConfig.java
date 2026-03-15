@@ -17,6 +17,13 @@ public class JwtConfig {
     @Value("${jwt.refresh-expiration}")
     private long refreshExpiration;
 
+    @Value("${jwt.pending-login-expiration}")
+    private long pendingLoginExpiration;
+
+    @Value("${jwt.pending-register-expiration}")
+    private long pendingRegisterExpiration;
+
+
     @PostConstruct
     public void validate() {
         if (secret == null || secret.isBlank()) {
@@ -34,5 +41,13 @@ public class JwtConfig {
 
     public long getRefreshExpiration() {
         return refreshExpiration;
+    }
+
+    public long getPendingLoginExpiration() {
+        return pendingLoginExpiration;
+    }
+
+    public long getPendingRegisterExpiration() {
+        return pendingRegisterExpiration;
     }
 }

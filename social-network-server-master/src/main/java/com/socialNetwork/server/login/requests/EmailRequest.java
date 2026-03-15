@@ -1,7 +1,7 @@
 package com.socialNetwork.server.login.requests;
 
 public class EmailRequest {
-
+    ///  זה חדש
     private String email;
 
     public EmailRequest() {

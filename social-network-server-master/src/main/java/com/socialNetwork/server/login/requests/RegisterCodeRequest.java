@@ -1,7 +1,7 @@
 package com.socialNetwork.server.login.requests;
 
 public class RegisterCodeRequest extends EmailRequest {
-
+///  זה חדש
     private String code;
 
     public RegisterCodeRequest() {

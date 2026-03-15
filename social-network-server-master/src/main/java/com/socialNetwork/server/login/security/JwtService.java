@@ -50,6 +50,40 @@ public class JwtService {
                 .compact();
     }
 
+
+    public String generatePendingLoginToken(Long userId, String username, String email) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + jwtConfig.getPendingLoginExpiration());
+
+        return Jwts.builder()
+                .subject(username)
+                .claim("userId", userId)
+                .claim("email", email)
+                .claim("type", "pending_login")
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String generatePendingRegisterToken(String email) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + jwtConfig.getPendingRegisterExpiration());
+
+        return Jwts.builder()
+                .subject(email)
+                .claim("email", email)
+                .claim("type", "pending_register")
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractAllClaims(token).get("email", String.class);
+    }
+
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
