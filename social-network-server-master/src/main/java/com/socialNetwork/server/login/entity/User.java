@@ -1,13 +1,34 @@
 package com.socialNetwork.server.login.entity;
 
+import java.util.Objects;
+
 public class User {
     private int id;
     private String username;
     private String email;
     private String passwordHash;
+    private String profileImageUrl;
 
     public User() {
     }
+
+    public User(int id, String username, String email, String passwordHash, String profileImageUrl) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
 
     public int getId() {
         return id;
@@ -40,4 +61,6 @@ public class User {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
+
 }
+

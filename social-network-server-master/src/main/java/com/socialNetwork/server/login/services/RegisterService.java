@@ -140,7 +140,7 @@ public class RegisterService {
             if (request == null || request.getRegistrationToken() == null || request.getRegistrationToken().isBlank()) {
                 return registerFailure(Errors.REGISTRATION_FAILED);
             }
-            if(validToken(request.getRegistrationToken())) {
+            if(!validToken(request.getRegistrationToken())) {
                 return registerFailure(Errors.INVALID_TOKEN);
             }
             String emailFromToken = jwtService.extractEmail(request.getRegistrationToken());
