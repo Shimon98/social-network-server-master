@@ -98,13 +98,13 @@ public class RegisterService {
         this.jwtService = jwtService;
     }
 
+
     public BasicResponse sendRegisterCode(EmailRequest request) {
         try {
             if (request == null || request.getEmail() == null || request.getEmail().isBlank()) {
                 return new BasicResponse(false, Errors.REGISTRATION_FAILED);
             }
             String normalizedEmail = authCommonService.normalizeEmail(request.getEmail());
-            // זמני - עד שיהיה לך emailExists מסודר ב-DBManager
             if (dbManager.userExists("", normalizedEmail)) {
                 return new BasicResponse(false, Errors.USER_ALREADY_EXISTS);
             }
@@ -136,39 +136,25 @@ public class RegisterService {
     }
 
     public RegisterResponse register(RegisterCompleteRequest request) {
-        // במתודה הזאת מקבלים טוקן הרשמה זמני,
-        // מוציאים ממנו את המייל, ולא לוקחים מייל מהלקוח
         try {
             if (request == null || request.getRegistrationToken() == null || request.getRegistrationToken().isBlank()) {
                 return registerFailure(Errors.REGISTRATION_FAILED);
             }
-            if (!jwtService.isTokenValid(request.getRegistrationToken())) {
-                return registerFailure(Errors.INVALID_TOKEN);
-            }
-            if (!"pending_register".equals(jwtService.extractTokenType(request.getRegistrationToken()))) {
+            if(validToken(request.getRegistrationToken())) {
                 return registerFailure(Errors.INVALID_TOKEN);
             }
             String emailFromToken = jwtService.extractEmail(request.getRegistrationToken());
-            RegisterRequest registerRequest = new RegisterRequest(
-                    request.getUsername(),
-                    emailFromToken,
-                    request.getPassword()
-            );
-
-            Integer validationErrorCode = AuthValidator.validateRegisterRequest(registerRequest);
+            Integer validationErrorCode = validationErrorCode(request, emailFromToken);
             if (validationErrorCode != null) {
                 return registerFailure(validationErrorCode);
             }
-            String normalizedUsername = authCommonService.normalizeUsername(request.getUsername());
-            String normalizedEmail = emailFromToken;
-            String normalizedPassword = authCommonService.normalizePassword(request.getPassword());
-            if (dbManager.userExists(normalizedUsername, normalizedEmail)) {
+            User user = createUser(request,emailFromToken);
+            if (dbManager.userExists(user.getUsername(), user.getEmail())) {
                 return registerFailure(Errors.USER_ALREADY_EXISTS);
             }
-            if (!ifInsertedNewUser(normalizedUsername, normalizedEmail, normalizedPassword)) {
+            if (!ifInsertedNewUser(user)) {
                 return registerFailure(Errors.REGISTRATION_FAILED);
             }
-
             return new RegisterResponse(true, null);
 
         } catch (Exception e) {
@@ -177,11 +163,36 @@ public class RegisterService {
         }
     }
 
-    private Boolean ifInsertedNewUser(String normalizedUsername, String normalizedEmail, String normalizedPassword) {
-        String passwordHash = authCommonService.hashPassword(normalizedUsername, normalizedPassword);
-        User user = authCommonService.createUser(normalizedUsername, normalizedEmail, passwordHash);
+    private Boolean validToken(String token) {
+        if (!jwtService.isTokenValid(token)) {
+            return false;}
+        if (!"pending_register".equals(jwtService.extractTokenType(token))) {
+            return false;}
+        return true;
+    }
+
+
+    private Integer validationErrorCode (RegisterCompleteRequest request, String email) {
+        RegisterRequest registerRequest = new RegisterRequest(request.getUsername(), email,
+                request.getPassword()
+        );
+        Integer validationErrorCode = AuthValidator.validateRegisterRequest(registerRequest);
+        return validationErrorCode;
+    }
+
+    private Boolean ifInsertedNewUser(User user) {
         return dbManager.createUserOnDb(user);
     }
+
+    private User createUser(RegisterCompleteRequest request ,String email) {
+        String normalizedUsername = authCommonService.normalizeUsername(request.getUsername());
+        String normalizedEmail = authCommonService.normalizeEmail(email);
+        String normalizedPassword = authCommonService.normalizePassword(request.getPassword());
+        String passwordHash = authCommonService.hashPassword(normalizedUsername, normalizedPassword);
+        User user = authCommonService.createUser(normalizedUsername, normalizedEmail, passwordHash);
+        return user;
+    }
+
 
     private RegisterResponse registerFailure(Integer errorCode) {
         return new RegisterResponse(false, errorCode);
