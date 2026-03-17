@@ -102,7 +102,6 @@ public class LoginService {
                 return new PendingLoginResponse(false, Errors.INVALID_CREDENTIALS, null);
             }
             emailManager.sendLoginCode(user.getEmail());
-
             String pendingLoginToken = jwtService.generatePendingLoginToken(
                     (long) user.getId(),
                     user.getUsername(),
@@ -160,8 +159,7 @@ public class LoginService {
         if (user == null) {
             return null;
         }
-        if (!authCommonService.isPasswordMatch(normalizedUsername,
-                normalizedPassword,
+        if (!authCommonService.isPasswordMatch(normalizedUsername, normalizedPassword,
                 user.getPasswordHash())) {
             return null;
         }

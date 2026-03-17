@@ -143,10 +143,10 @@ public class RegisterService {
                 return registerFailure(Errors.REGISTRATION_FAILED);
             }
             if (!jwtService.isTokenValid(request.getRegistrationToken())) {
-                return registerFailure(Errors.REGISTRATION_FAILED);
+                return registerFailure(Errors.INVALID_TOKEN);
             }
             if (!"pending_register".equals(jwtService.extractTokenType(request.getRegistrationToken()))) {
-                return registerFailure(Errors.REGISTRATION_FAILED);
+                return registerFailure(Errors.INVALID_TOKEN);
             }
             String emailFromToken = jwtService.extractEmail(request.getRegistrationToken());
             RegisterRequest registerRequest = new RegisterRequest(
