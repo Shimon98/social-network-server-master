@@ -43,7 +43,7 @@
 package com.socialNetwork.server.login.services;
 
 import com.socialNetwork.server.login.requests.EmailRequest;
-import com.socialNetwork.server.login.requests.LoginCodeRequest;
+import com.socialNetwork.server.login.requests.LoginCodeAnswer;
 import com.socialNetwork.server.login.requests.LoginRequest;
 import com.socialNetwork.server.login.requests.RegisterCodeRequest;
 import com.socialNetwork.server.login.requests.RegisterCompleteRequest;
@@ -73,7 +73,7 @@ public class AuthManeger {
         return loginService.startLogin(request);
     }
 
-    public LoginResponse verifyLoginCode(LoginCodeRequest request) {
+    public LoginResponse verifyLoginCode(LoginCodeAnswer request) {
         return loginService.verifyLoginCode(request);
     }
 

@@ -65,7 +65,7 @@ package com.socialNetwork.server.login.services;
 import com.socialNetwork.server.login.dataBase.DBManager;
 import com.socialNetwork.server.login.email.EmailManager;
 import com.socialNetwork.server.login.entity.User;
-import com.socialNetwork.server.login.requests.LoginCodeRequest;
+import com.socialNetwork.server.login.requests.LoginCodeAnswer;
 import com.socialNetwork.server.login.requests.LoginRequest;
 import com.socialNetwork.server.login.responses.LoginResponse;
 import com.socialNetwork.server.login.responses.PendingLoginResponse;
@@ -115,7 +115,7 @@ public class LoginService {
         }
     }
 
-    public LoginResponse verifyLoginCode(LoginCodeRequest request) {
+    public LoginResponse verifyLoginCode(LoginCodeAnswer request) {
         try {
             if (request == null || request.getPendingLoginToken() == null || request.getCode() == null) {
                 return loginFailure(Errors.INVALID_CREDENTIALS);

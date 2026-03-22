@@ -6,7 +6,6 @@ import com.socialNetwork.server.login.services.AuthCookieService;
 import com.socialNetwork.server.login.services.AuthManeger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,8 +40,13 @@ public class AuthController {
         return authManeger.startLogin(request);
     }
 
+    public  PendingLoginResponse sendLoginCode(@RequestBody LoginCodeAnswer request) {
+
+    }
+
+
     @PostMapping("/login/verify-code")// שני
-    public BasicResponse verifyLoginCode(@RequestBody LoginCodeRequest request, HttpServletResponse response) {
+    public BasicResponse verifyLoginCode(@RequestBody LoginCodeAnswer request, HttpServletResponse response) {
         LoginResponse result = authManeger.verifyLoginCode(request);
         if (!result.isSuccess()) {
             return new BasicResponse(false, result.getErrorCode());

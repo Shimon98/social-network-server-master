@@ -55,6 +55,6 @@ public class VerificationCode {
     }
 
     public void addAttempt() {
-        this.attempts = attempts++;
+        this.attempts++;
     }
 }

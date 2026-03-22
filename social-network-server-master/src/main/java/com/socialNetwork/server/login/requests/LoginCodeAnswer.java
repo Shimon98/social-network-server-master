@@ -1,14 +1,14 @@
 package com.socialNetwork.server.login.requests;
 
-public class LoginCodeRequest {
+public class LoginCodeAnswer {
     ///  זה חדש
     private String pendingLoginToken;
     private String code;
 
-    public LoginCodeRequest() {
+    public LoginCodeAnswer() {
     }
 
-    public LoginCodeRequest(String pendingLoginToken, String code) {
+    public LoginCodeAnswer(String pendingLoginToken, String code) {
         this.pendingLoginToken = pendingLoginToken;
         this.code = code;
     }
