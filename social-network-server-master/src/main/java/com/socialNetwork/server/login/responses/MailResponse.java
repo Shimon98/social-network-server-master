@@ -1,20 +1,20 @@
 package com.socialNetwork.server.login.responses;
 
 public class MailResponse extends BasicResponse {
-    private String token;
+    private String tempToken;
 
-    public MailResponse(boolean success, Integer errorCode, String token) {
+    public MailResponse(boolean success, Integer errorCode, String tempToken) {
         super(success, errorCode);
-        this.token = token;
+        this.tempToken = tempToken;
     }
 
 
-    public String getToken() {
-        return token;
+    public String getTempToken() {
+        return tempToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setTempToken(String tempToken) {
+        this.tempToken = tempToken;
     }
 
 }
