@@ -1,28 +1,17 @@
 package com.socialNetwork.server.login.requests;
 
-public class LoginCodeAnswer {
-    ///  זה חדש
-    private String pendingLoginToken;
+public class LoginCodeAnswer extends LoginCodeRequest {
     private String code;
-
     public LoginCodeAnswer() {
     }
 
     public LoginCodeAnswer(String pendingLoginToken, String code) {
-        this.pendingLoginToken = pendingLoginToken;
+        super(pendingLoginToken);
         this.code = code;
-    }
-
-    public String getPendingLoginToken() {
-        return pendingLoginToken;
     }
 
     public String getCode() {
         return code;
-    }
-
-    public void setPendingLoginToken(String pendingLoginToken) {
-        this.pendingLoginToken = pendingLoginToken;
     }
 
     public void setCode(String code) {

@@ -11,6 +11,7 @@ public class Errors {
 
     public static final int MISSING_EMAIL = 1005;
     public static final int INVALID_EMAIL = 1006;
+    public static final int INVALID_SEND_CODE = 1007;
 
     public static final int USERNAME_ALREADY_EXISTS = 2000;
     public static final int EMAIL_ALREADY_EXISTS = 2001;
@@ -22,4 +23,8 @@ public class Errors {
     public static final int INTERNAL_SERVER_ERROR = 5000;
 
     public static final int INVALID_TOKEN = 6000;
+
+
+
+
 }

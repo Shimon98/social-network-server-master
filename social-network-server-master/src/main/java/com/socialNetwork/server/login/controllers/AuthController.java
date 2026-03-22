@@ -36,12 +36,12 @@ public class AuthController {
     }
 
     @PostMapping("/login") // ראשון
-    public PendingLoginResponse login(@RequestBody LoginRequest request) {
+    public BasicResponse login(@RequestBody LoginRequest request) {
         return authManeger.startLogin(request);
     }
 
-    public  PendingLoginResponse sendLoginCode(@RequestBody LoginCodeAnswer request) {
-
+    public  BasicResponse sendLoginCode(@RequestBody LoginCodeRequest request) {
+        return authManeger.sendLoginCode(request);
     }
 
 

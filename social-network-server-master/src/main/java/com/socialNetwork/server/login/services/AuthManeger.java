@@ -42,11 +42,7 @@
 
 package com.socialNetwork.server.login.services;
 
-import com.socialNetwork.server.login.requests.EmailRequest;
-import com.socialNetwork.server.login.requests.LoginCodeAnswer;
-import com.socialNetwork.server.login.requests.LoginRequest;
-import com.socialNetwork.server.login.requests.RegisterCodeRequest;
-import com.socialNetwork.server.login.requests.RegisterCompleteRequest;
+import com.socialNetwork.server.login.requests.*;
 import com.socialNetwork.server.login.responses.BasicResponse;
 import com.socialNetwork.server.login.responses.LoginResponse;
 import com.socialNetwork.server.login.responses.PendingLoginResponse;
@@ -96,4 +92,9 @@ public class AuthManeger {
     public BasicResponse logout(String refreshTokenValue) {
         return tokenService.logout(refreshTokenValue);
     }
+
+    public BasicResponse sendLoginCode  (LoginCodeRequest request) {
+        return sendLoginCode(request);
+    }
+
 }
