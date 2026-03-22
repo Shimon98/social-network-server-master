@@ -70,20 +70,16 @@ public class LoginService {
         return user;
     }
 
-
-
-
-    private BasicResponse sendLoginCode(LoginCodeRequest request) {
+    public BasicResponse sendLoginCode(LoginCodeRequest request) {
         if (request== null)
         { return sendCodeFailure(Errors.INVALID_SEND_CODE);}
         User user = authCommonService.getAuthUserFormToken(request.getPendingLoginToken());
         if (user==null) { return sendCodeFailure(Errors.INVALID_SEND_CODE);}
-        boolean sent=emailManager.sendLoginCode(user.getEmail());
-        if (!sent) { return sendCodeFailure(Errors.INVALID_SEND_CODE);}
-
+        emailManager.sendLoginCode(user.getEmail());
         String token= request.getPendingLoginToken();
         return new MailResponse(true, null,token);
     }
+
     private MailResponse sendCodeFailure(Integer errorCode) {
         return new MailResponse(false, errorCode, null);
     }

@@ -40,12 +40,14 @@ public class AuthController {
         return authManeger.startLogin(request);
     }
 
+
+    @PostMapping("/send-login-code")
     public  BasicResponse sendLoginCode(@RequestBody LoginCodeRequest request) {
         return authManeger.sendLoginCode(request);
     }
 
 
-    @PostMapping("/login/verify-code")// שני
+    @PostMapping("/login/verify-code")
     public BasicResponse verifyLoginCode(@RequestBody LoginCodeAnswer request, HttpServletResponse response) {
         LoginResponse result = authManeger.verifyLoginCode(request);
         if (!result.isSuccess()) {

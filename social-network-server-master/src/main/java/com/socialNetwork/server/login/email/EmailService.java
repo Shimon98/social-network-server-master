@@ -36,7 +36,7 @@ public class EmailService {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
-        this.mailSender.send(message);
+        mailSender.send(message);
     }
 
     private String buildRegisterEmailText(String code) {

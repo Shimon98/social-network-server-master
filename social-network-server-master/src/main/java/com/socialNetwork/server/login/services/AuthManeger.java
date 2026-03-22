@@ -94,7 +94,7 @@ public class AuthManeger {
     }
 
     public BasicResponse sendLoginCode  (LoginCodeRequest request) {
-        return sendLoginCode(request);
+        return loginService.sendLoginCode(request);
     }
 
 }

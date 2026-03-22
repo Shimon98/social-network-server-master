@@ -37,14 +37,6 @@ public class VerificationCodeService {
         return ifCanUseCode(TempCodePurpose.REGISTER_PURPOSE , email, code );
     }
 
-//    public VerificationCode getLoginCodFromCacheByEmail(String email){
-//        return getCodeFromCache(TempCodePurpose.LOGIN_PURPOSE,email);
-//
-//    }
-//    public VerificationCode getRegisterCodFromCacheByEmail(String email){
-//        return getCodeFromCache(TempCodePurpose.REGISTER_PURPOSE,email);
-//    }
-
     private VerificationCode crateCode(String email , TempCodePurpose purpose){
         VerificationCode verificationCode = new VerificationCode(purpose,email, generateCode());
         String key = buildKey(purpose, email);
