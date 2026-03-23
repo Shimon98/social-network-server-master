@@ -1,6 +1,6 @@
 package com.socialNetwork.server.login.services;
 
-import com.socialNetwork.server.login.dataBase.DBManager;
+import com.socialNetwork.server.login.database.DBManager;
 import com.socialNetwork.server.login.entity.RefreshToken;
 import com.socialNetwork.server.login.entity.User;
 import com.socialNetwork.server.login.responses.BasicResponse;

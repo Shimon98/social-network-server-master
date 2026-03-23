@@ -64,7 +64,7 @@
 
 package com.socialNetwork.server.login.services;
 
-import com.socialNetwork.server.login.dataBase.DBManager;
+import com.socialNetwork.server.login.database.DBManager;
 import com.socialNetwork.server.login.email.EmailManager;
 import com.socialNetwork.server.login.entity.User;
 import com.socialNetwork.server.login.requests.EmailRequest;

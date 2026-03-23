@@ -12,19 +12,33 @@ create table users
         unique (username)
 );
 
+create table follows
+(
+    follower_id bigint not null,
+    followed_id bigint not null,
+    primary key (follower_id, followed_id),
+    constraint followed_id
+        foreign key (followed_id) references users (id)
+            on delete cascade,
+    constraint follower_id
+        foreign key (follower_id) references users (id)
+            on delete cascade
+);
+
 create table posts
 (
     id         bigint auto_increment
         primary key,
     user_id    bigint                              not null,
     content    text                                not null,
-    created_at timestamp default CURRENT_TIMESTAMP null,
-    constraint posts_ibfk_1
+    created_at timestamp default CURRENT_TIMESTAMP not null,
+    constraint poster_user_id
         foreign key (user_id) references users (id)
+            on delete cascade
 );
 
-create index user_id
-    on posts (user_id);
+create index posts_user_id_created_at_index
+    on posts (user_id, created_at);
 
 create table refresh_tokens
 (
@@ -36,7 +50,8 @@ create table refresh_tokens
     created_at bigint       not null,
     constraint token
         unique (token),
-    constraint `refresh_tokens_ibfk_1;`
+    constraint user_id
         foreign key (user_id) references users (id)
+            on delete cascade
 );
 

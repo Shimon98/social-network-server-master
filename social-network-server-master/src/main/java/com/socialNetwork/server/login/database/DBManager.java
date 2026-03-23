@@ -1,4 +1,4 @@
-package com.socialNetwork.server.login.dataBase;
+package com.socialNetwork.server.login.database;
 
 import com.socialNetwork.server.login.config.DatabaseConfig;
 import com.socialNetwork.server.login.entity.RefreshToken;
