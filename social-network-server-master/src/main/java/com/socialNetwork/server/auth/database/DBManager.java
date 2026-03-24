@@ -370,7 +370,6 @@ public class DBManager {
         } catch (SQLException e) {
             logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage(), e);
         }
-
         return posts;
     }
 }
