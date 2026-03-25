@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
+import static com.socialNetwork.server.auth.utils.Constants.COOKIE_VALUE;
+import static com.socialNetwork.server.auth.utils.Constants.SECOND;
+
 @Service
 public class AuthCookieService {
 
@@ -22,7 +25,7 @@ public class AuthCookieService {
                 response,
                 Constants.ACCESS_COOKIE_NAME,
                 token,
-                jwtConfig.getAccessExpiration() / 1000
+                jwtConfig.getAccessExpiration() / SECOND
         );
     }
 
@@ -31,7 +34,7 @@ public class AuthCookieService {
                 response,
                 Constants.REFRESH_COOKIE_NAME,
                 token,
-                jwtConfig.getRefreshExpiration() / 1000
+                jwtConfig.getRefreshExpiration() / SECOND
         );
     }
 
@@ -70,7 +73,7 @@ public class AuthCookieService {
     }
 
     private void expireCookie(HttpServletResponse response, String cookieName) {
-        addCookie(response, cookieName, "", Constants.COOKIE_DELETE_MAX_AGE);
+        addCookie(response, cookieName, COOKIE_VALUE, Constants.COOKIE_DELETE_MAX_AGE);
     }
 
     private ResponseCookie buildCookie(String cookieName, String cookieValue, long maxAgeSeconds) {

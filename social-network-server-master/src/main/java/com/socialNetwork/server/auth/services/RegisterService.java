@@ -36,7 +36,7 @@
 //            if (dbManager.userExists(normalizedUsername, normalizedEmail)) {
 //                return registerFailure(Errors.USER_ALREADY_EXISTS);
 //            }
-////
+/// /
 //            if (!ifInsertedNewUser(normalizedUsername, normalizedEmail, normalizedPassword)) {
 //                return registerFailure(Errors.REGISTRATION_FAILED);
 //            }
@@ -82,6 +82,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import static com.socialNetwork.server.auth.utils.ConstantLogger.LOG_REGISTER_SEND_CODE_ERROR;
+import static com.socialNetwork.server.auth.utils.ConstantLogger.LOG_REGISTER_VERIFY_CODE_ERROR;
+import static com.socialNetwork.server.auth.utils.Constants.PENDING_REGISTER;
+
 @Service
 public class RegisterService {
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
@@ -112,7 +116,7 @@ public class RegisterService {
             return new BasicResponse(true, null);
 
         } catch (Exception e) {
-            logger.error("Failed to send register code for email {}", request.getEmail(), e);
+            logger.error(LOG_REGISTER_SEND_CODE_ERROR, request.getEmail(), e);
             return new BasicResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR);
         }
     }
@@ -130,7 +134,7 @@ public class RegisterService {
             String registrationToken = jwtService.generatePendingRegisterToken(normalizedEmail);
             return new RegisterCodeVerifyResponse(true, null, registrationToken);
         } catch (Exception e) {
-            logger.error("Failed to verify register code for email {}", request.getEmail(), e);
+            logger.error(LOG_REGISTER_VERIFY_CODE_ERROR, request.getEmail(), e);
             return new RegisterCodeVerifyResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR, null);
         }
     }
@@ -140,7 +144,7 @@ public class RegisterService {
             if (request == null || request.getRegistrationToken() == null || request.getRegistrationToken().isBlank()) {
                 return registerFailure(ErrorCodes.REGISTRATION_FAILED);
             }
-            if(!validToken(request.getRegistrationToken())) {
+            if (!validToken(request.getRegistrationToken())) {
                 return registerFailure(ErrorCodes.INVALID_TOKEN);
             }
             String emailFromToken = jwtService.extractEmail(request.getRegistrationToken());
@@ -148,7 +152,7 @@ public class RegisterService {
             if (validationErrorCode != null) {
                 return registerFailure(validationErrorCode);
             }
-            User user = createUser(request,emailFromToken);
+            User user = createUser(request, emailFromToken);
             if (dbManager.userExists(user.getUsername(), user.getEmail())) {
                 return registerFailure(ErrorCodes.USER_ALREADY_EXISTS);
             }
@@ -165,14 +169,15 @@ public class RegisterService {
 
     private Boolean validToken(String token) {
         if (!jwtService.isTokenValid(token)) {
-            return false;}
-        if (!"pending_register".equals(jwtService.extractTokenType(token))) {
-            return false;}
+            return false;
+        }
+        if (!PENDING_REGISTER.equals(jwtService.extractTokenType(token))) {
+            return false;
+        }
         return true;
     }
 
-
-    private Integer validationErrorCode (RegisterCompleteRequest request, String email) {
+    private Integer validationErrorCode(RegisterCompleteRequest request, String email) {
         RegisterRequest registerRequest = new RegisterRequest(request.getUsername(), email,
                 request.getPassword()
         );
@@ -184,7 +189,7 @@ public class RegisterService {
         return dbManager.createUserOnDb(user);
     }
 
-    private User createUser(RegisterCompleteRequest request ,String email) {
+    private User createUser(RegisterCompleteRequest request, String email) {
         String normalizedUsername = authCommonService.normalizeUsername(request.getUsername());
         String normalizedEmail = authCommonService.normalizeEmail(email);
         String normalizedPassword = authCommonService.normalizePassword(request.getPassword());
@@ -192,7 +197,6 @@ public class RegisterService {
         User user = authCommonService.createUser(normalizedUsername, normalizedEmail, passwordHash);
         return user;
     }
-
 
     private RegisterResponse registerFailure(Integer errorCode) {
         return new RegisterResponse(false, errorCode);

@@ -1,5 +1,6 @@
 package com.socialNetwork.server.auth.security;
 
+import com.socialNetwork.server.auth.utils.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -28,8 +29,8 @@ public class JwtService {
 
         return Jwts.builder()
                 .subject(username)
-                .claim("userId", userId)
-                .claim("type", "access")
+                .claim(Constants.USER_ID, userId)
+                .claim(Constants.TYPE, Constants.ACCESS)
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(getSigningKey())
@@ -42,8 +43,8 @@ public class JwtService {
 
         return Jwts.builder()
                 .subject(username)
-                .claim("userId", userId)
-                .claim("type", "refresh")
+                .claim(Constants.USER_ID, userId)
+                .claim(Constants.TYPE, Constants.REFRESH)
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(getSigningKey())
@@ -57,9 +58,9 @@ public class JwtService {
 
         return Jwts.builder()
                 .subject(username)
-                .claim("userId", userId)
-                .claim("email", email)
-                .claim("type", "pending_login")
+                .claim(Constants.USER_ID, userId)
+                .claim(Constants.EMAIL, email)
+                .claim(Constants.TYPE, Constants.PENDING_LOGIN)
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(getSigningKey())
@@ -72,8 +73,8 @@ public class JwtService {
 
         return Jwts.builder()
                 .subject(email)
-                .claim("email", email)
-                .claim("type", "pending_register")
+                .claim(Constants.EMAIL, email)
+                .claim(Constants.TYPE, Constants.PENDING_REGISTER)
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(getSigningKey())
@@ -81,7 +82,7 @@ public class JwtService {
     }
 
     public String extractEmail(String token) {
-        return extractAllClaims(token).get("email", String.class);
+        return extractAllClaims(token).get(Constants.EMAIL, String.class);
     }
 
     public String extractUsername(String token) {
@@ -89,11 +90,11 @@ public class JwtService {
     }
 
     public Long extractUserId(String token) {
-        return extractAllClaims(token).get("userId", Long.class);
+        return extractAllClaims(token).get(Constants.USER_ID, Long.class);
     }
 
     public String extractTokenType(String token) {
-        return extractAllClaims(token).get("type", String.class);
+        return extractAllClaims(token).get(Constants.TYPE, String.class);
     }
 
     public Long extractExpirationTime(String token) {

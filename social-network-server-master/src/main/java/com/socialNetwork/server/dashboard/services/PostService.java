@@ -38,13 +38,15 @@ public class PostService {
         return new FeedResponse(true, ErrorCodes.GET_FEED_SUCCESS, posts);
     }
 
-    public BasicResponse deletePost(Long currentUserId, Long postId) {
-        boolean deleted = dbManager.deletePost(postId, currentUserId);
 
+    public BasicResponse deletePost(Long currentUserId, Long postId) {
+        if (currentUserId == null || postId == null) {
+            return new BasicResponse(false, ErrorCodes.POST_DELETE_FAILURE);
+        }
+        boolean deleted = dbManager.deletePost(postId, currentUserId);
         if (!deleted) {
             return new BasicResponse(false, ErrorCodes.POST_DELETE_FAILURE);
         }
-
         return new BasicResponse(true, ErrorCodes.POST_DELETE_SUCCESS);
     }
 

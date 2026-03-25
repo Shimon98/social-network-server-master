@@ -2,8 +2,10 @@ package com.socialNetwork.server.dashboard.services;
 
 import com.socialNetwork.server.auth.security.JwtService;
 import com.socialNetwork.server.auth.services.AuthCookieService;
+import com.socialNetwork.server.auth.utils.Constants;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class CurrentUserService {
@@ -20,15 +22,15 @@ public class CurrentUserService {
         String token = authCookieService.getAccessTokenFromCookies(request);
 
         if (token == null || token.isBlank()) {
-            throw new RuntimeException("Missing token");
+            throw new RuntimeException(Constants.MISSING_TOKEN);
         }
 
         if (!jwtService.isTokenValid(token)) {
-            throw new RuntimeException("Invalid token");
+            throw new RuntimeException(Constants.INVALID_TOKEN);
         }
 
-        if (!"access".equals(jwtService.extractTokenType(token))) {
-            throw new RuntimeException("Wrong token type");
+        if (!Constants.ACCESS.equals(jwtService.extractTokenType(token))) {
+            throw new RuntimeException(Constants.WRONG_TOKEN_TYPE);
         }
 
         return jwtService.extractUserId(token);

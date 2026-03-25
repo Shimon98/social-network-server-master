@@ -1,5 +1,7 @@
 package com.socialNetwork.server.auth.hashing;
 
+import com.socialNetwork.server.auth.utils.Constants;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,18 +15,18 @@ public class PasswordHashUtil {
         String source = username + password;
 
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance(Constants.ALGORITHM);
             byte[] hashBytes = digest.digest(source.getBytes(StandardCharsets.UTF_8));
 
             StringBuilder hashString = new StringBuilder();
             for (byte b : hashBytes) {
-                hashString.append(String.format("%02x", b));
+                hashString.append(String.format(Constants.FORMAT, b));
             }
 
             return hashString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Hash error", e);
+            throw new RuntimeException(Constants.HASH_ERROR, e);
         }
     }
 }

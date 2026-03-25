@@ -4,6 +4,7 @@ import com.socialNetwork.server.auth.database.DBManager;
 import com.socialNetwork.server.auth.entity.User;
 import com.socialNetwork.server.auth.hashing.PasswordHashUtil;
 import com.socialNetwork.server.auth.security.JwtService;
+import com.socialNetwork.server.auth.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +60,7 @@ public class AuthCommonService {
             return false;}
         if (!jwtService.isTokenValid(token)) {
             return false;     }
-        if (!"pending_login".equals(jwtService.extractTokenType(token))) {
+        if (!Constants.PENDING_LOGIN.equals(jwtService.extractTokenType(token))) {
             return false;}
         return true;
     }

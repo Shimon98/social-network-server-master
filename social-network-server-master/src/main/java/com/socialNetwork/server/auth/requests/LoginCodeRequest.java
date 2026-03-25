@@ -3,7 +3,6 @@ package com.socialNetwork.server.auth.requests;
 public class LoginCodeRequest {
     private String tempToken;
 
-
     public LoginCodeRequest() {
     }
 

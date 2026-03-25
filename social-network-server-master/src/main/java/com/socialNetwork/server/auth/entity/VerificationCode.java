@@ -15,7 +15,6 @@ public class VerificationCode {
         this.code = code;
         this.attempts = 0;
         this.createAt = System.currentTimeMillis();
-
     }
 
     public String getEmail() {

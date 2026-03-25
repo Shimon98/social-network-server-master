@@ -28,7 +28,6 @@ public class User {
         this.profileImageUrl = profileImageUrl;
     }
 
-
     public long getId() {
         return id;
     }

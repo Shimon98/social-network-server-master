@@ -73,7 +73,6 @@ public class VerificationCodeService {
                 removeIfBAN(codeFromCache);
             }
         return ifCanUseCode;
-
     }
 
     private void removeIfBAN(VerificationCode codeFromCache){

@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import static com.socialNetwork.server.auth.utils.ConstantLogger.LOG_VERIFY_LOGIN_CODE_FAIL;
+
 @Service
 public class LoginService {
     private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
@@ -43,7 +45,7 @@ public class LoginService {
             if (user == null) {
                 return new PendingLoginResponse(false, ErrorCodes.INVALID_CREDENTIALS, null);
             }
-            String pendingLoginToken = jwtService.generatePendingLoginToken((long) user.getId(), user.getUsername(),
+            String pendingLoginToken = jwtService.generatePendingLoginToken(user.getId(), user.getUsername(),
                     user.getEmail()
             );
             return new PendingLoginResponse(true, null, pendingLoginToken);
@@ -108,7 +110,7 @@ public class LoginService {
             return tokenService.createLoginTokens(user);
 
         } catch (Exception e) {
-            logger.error("Failed to verify login code", e);
+            logger.error(LOG_VERIFY_LOGIN_CODE_FAIL, e);
             return loginFailure(ErrorCodes.INTERNAL_SERVER_ERROR);
         }
     }

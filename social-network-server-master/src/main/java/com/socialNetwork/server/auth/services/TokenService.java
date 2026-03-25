@@ -7,6 +7,7 @@ import com.socialNetwork.server.auth.responses.BasicResponse;
 import com.socialNetwork.server.auth.responses.LoginResponse;
 import com.socialNetwork.server.auth.security.JwtService;
 import com.socialNetwork.server.auth.utils.ConstantLogger;
+import com.socialNetwork.server.auth.utils.Constants;
 import com.socialNetwork.server.auth.utils.ErrorCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class TokenService {
                 return null;
             }
 
-            if (!"refresh".equals(jwtService.extractTokenType(refreshTokenValue))) {
+            if (!Constants.REFRESH.equals(jwtService.extractTokenType(refreshTokenValue))) {
                 return null;
             }
 

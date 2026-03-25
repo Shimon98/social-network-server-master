@@ -1,7 +1,7 @@
 package com.socialNetwork.server.auth.requests;
 
 public class RegisterCompleteRequest {
-    ///  זה חדש
+
     private String registrationToken;
     private String username;
     private String password;
