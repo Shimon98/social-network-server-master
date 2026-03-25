@@ -1,4 +1,5 @@
-create table users
+create table if not exists users
+
 (
     id                bigint auto_increment
         primary key,
@@ -12,7 +13,7 @@ create table users
         unique (username)
 );
 
-create table follows
+create table if not exists follows
 (
     follower_id bigint not null,
     followed_id bigint not null,
@@ -25,7 +26,7 @@ create table follows
             on delete cascade
 );
 
-create table posts
+create table if not exists posts
 (
     id         bigint auto_increment
         primary key,
@@ -37,10 +38,10 @@ create table posts
             on delete cascade
 );
 
-create index posts_user_id_created_at_index
+create index  posts_user_id_created_at_index
     on posts (user_id, created_at);
 
-create table refresh_tokens
+create table if not exists refresh_tokens
 (
     id         bigint auto_increment
         primary key,

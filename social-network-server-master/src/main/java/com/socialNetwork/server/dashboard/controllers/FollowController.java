@@ -2,6 +2,7 @@ package com.socialNetwork.server.dashboard.controllers;
 
 import com.socialNetwork.server.auth.responses.BasicResponse;
 import com.socialNetwork.server.dashboard.requests.FollowUserRequest;
+import com.socialNetwork.server.dashboard.requests.SearchRequest;
 import com.socialNetwork.server.dashboard.responses.FollowingResponse;
 import com.socialNetwork.server.dashboard.responses.SearchUsersResponse;
 import com.socialNetwork.server.dashboard.services.CurrentUserService;
@@ -23,9 +24,10 @@ public class FollowController {
         this.currentUserService = currentUserService;
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchUsers(@RequestParam String text,
+    @PostMapping("/search")
+    public ResponseEntity<?> searchUsers(@RequestBody SearchRequest textRequest,
                                          HttpServletRequest request) {
+        String text = textRequest.getText();
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
             SearchUsersResponse response = followService.searchUsers(currentUserId, text);
