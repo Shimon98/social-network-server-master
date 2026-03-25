@@ -1,14 +1,21 @@
 package com.socialNetwork.server.dashboard.responses;
 
+import com.socialNetwork.server.auth.responses.BasicResponse;
+
 import java.util.List;
 
-public class SearchUsersResponse {
+public class SearchUsersResponse extends BasicResponse {
     private List<UserPreviewResponse> users;
 
     public SearchUsersResponse() {
     }
 
-    public SearchUsersResponse(List<UserPreviewResponse> users) {
+    public SearchUsersResponse(boolean success, Integer errorCode) {
+        super();
+    }
+
+    public SearchUsersResponse(boolean success, Integer errorCode, List<UserPreviewResponse> users) {
+        super(success, errorCode);
         this.users = users;
     }
 

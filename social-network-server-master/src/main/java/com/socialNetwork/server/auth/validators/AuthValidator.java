@@ -3,7 +3,7 @@ package com.socialNetwork.server.auth.validators;
 import com.socialNetwork.server.auth.requests.LoginRequest;
 import com.socialNetwork.server.auth.requests.RegisterRequest;
 import com.socialNetwork.server.auth.utils.Constants;
-import com.socialNetwork.server.auth.utils.Errors;
+import com.socialNetwork.server.auth.utils.ErrorCodes;
 
 public class AuthValidator {
 
@@ -12,7 +12,7 @@ public class AuthValidator {
 
     public static Integer validateLoginRequest(LoginRequest request) {
         if (request == null) {
-            return Errors.INVALID_REQUEST;
+            return ErrorCodes.INVALID_REQUEST;
         }
         Integer errorCode = validateUsername(request.getUsername());
         if (errorCode != null) {
@@ -23,7 +23,7 @@ public class AuthValidator {
 
     public static Integer validateRegisterRequest(RegisterRequest request) {
         if (request == null) {
-            return Errors.INVALID_REQUEST;
+            return ErrorCodes.INVALID_REQUEST;
         }
         Integer errorCode = validateUsername(request.getUsername());
         if (errorCode != null) {
@@ -37,39 +37,39 @@ public class AuthValidator {
     }
 
     private static Integer validateUsername(String username) {
-        Integer missingFieldError = validateRequiredField(username, Errors.MISSING_USERNAME);
+        Integer missingFieldError = validateRequiredField(username, ErrorCodes.MISSING_USERNAME);
         if (missingFieldError != null) {
             return missingFieldError;
         }
         String normalizedUsername = username.trim();
         if (!isLengthInRange(normalizedUsername, Constants.MIN_USERNAME_LENGTH,
                 Constants.MAX_USERNAME_LENGTH)) {
-            return Errors.INVALID_USERNAME;
+            return ErrorCodes.INVALID_USERNAME;
         }
         return null;
     }
 
     private static Integer validateEmail(String email) {
-        Integer missingFieldError = validateRequiredField(email, Errors.MISSING_EMAIL);
+        Integer missingFieldError = validateRequiredField(email, ErrorCodes.MISSING_EMAIL);
         if (missingFieldError != null) {
             return missingFieldError;
         }
         String normalizedEmail = email.trim();
         if (!normalizedEmail.contains(Constants.EMAIL_AT_SIGN) ||
                 !normalizedEmail.contains(Constants.EMAIL_DOT)) {
-            return Errors.INVALID_EMAIL;
+            return ErrorCodes.INVALID_EMAIL;
         }
         return null;
     }
 
     private static Integer validatePassword(String password) {
-        Integer missingFieldError = validateRequiredField(password, Errors.MISSING_PASSWORD);
+        Integer missingFieldError = validateRequiredField(password, ErrorCodes.MISSING_PASSWORD);
         if (missingFieldError != null) {
             return missingFieldError;
         }
         String normalizedPassword = password.trim();
         if (normalizedPassword.length() < Constants.MIN_PASSWORD_LENGTH) {
-            return Errors.INVALID_PASSWORD;
+            return ErrorCodes.INVALID_PASSWORD;
         }
         return null;
     }

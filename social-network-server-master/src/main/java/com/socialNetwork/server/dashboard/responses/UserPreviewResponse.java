@@ -1,6 +1,8 @@
 package com.socialNetwork.server.dashboard.responses;
 
-public class UserPreviewResponse {
+import com.socialNetwork.server.auth.responses.BasicResponse;
+
+public class UserPreviewResponse extends BasicResponse {
     private Long id;
     private String username;
     private String profilePicture;
@@ -9,7 +11,8 @@ public class UserPreviewResponse {
     public UserPreviewResponse() {
     }
 
-    public UserPreviewResponse(Long id, String username, String profilePicture, boolean isFollowing) {
+    public UserPreviewResponse(boolean success, Integer errorCode,Long id, String username, String profilePicture, boolean isFollowing) {
+        super(success,errorCode);
         this.id = id;
         this.username = username;
         this.profilePicture = profilePicture;

@@ -307,6 +307,8 @@ public class DBManager {
                 post.setCreatedAt(resultSet.getTimestamp("created_at"));
                 post.setUsername(resultSet.getString("username"));
                 post.setProfilePicture(resultSet.getString("profile_image_url"));
+                post.setSuccess(true);
+                post.setErrorCode(null);
                 posts.add(post);
             }
         } catch (SQLException e) {
@@ -365,6 +367,8 @@ public class DBManager {
                 post.setCreatedAt(resultSet.getTimestamp("created_at"));
                 post.setUsername(resultSet.getString("username"));
                 post.setProfilePicture(resultSet.getString("profile_image_url"));
+                post.setSuccess(true);
+                post.setErrorCode(null);
                 posts.add(post);
             }
         } catch (SQLException e) {

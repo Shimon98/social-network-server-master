@@ -7,12 +7,12 @@ import java.util.List;
 public class FeedResponse extends BasicResponse {
     private List<PostResponse> posts;
 
-    public FeedResponse(boolean success, Integer errorCode,List<PostResponse> posts) {
-        super(success, errorCode);
-        this.posts = posts;
+    public FeedResponse() {
     }
 
-    public FeedResponse() {
+    public FeedResponse(boolean success, Integer errorCode, List<PostResponse> posts) {
+        super(success, errorCode);
+        this.posts = posts;
     }
 
     public List<PostResponse> getPosts() {

@@ -3,7 +3,7 @@ package com.socialNetwork.server.dashboard.services;
 import com.socialNetwork.server.auth.database.DBManager;
 import com.socialNetwork.server.auth.entity.User;
 import com.socialNetwork.server.auth.responses.BasicResponse;
-import com.socialNetwork.server.auth.utils.Errors;
+import com.socialNetwork.server.auth.utils.ErrorCodes;
 import com.socialNetwork.server.dashboard.responses.CurrentUserResponse;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +24,8 @@ public class DashboardService {
         }
 
         return new CurrentUserResponse(
+                true,
+                null,
                 user.getId(),
                 user.getUsername(),
                 user.getProfileImageUrl()
@@ -34,9 +36,9 @@ public class DashboardService {
         boolean updated = dbManager.updateProfileImage(currentUserId, profileImageUrl);
 
         if (!updated) {
-            return new BasicResponse(false, Errors.INVALID_PROFILE_IMAGE);
+            return new BasicResponse(false, ErrorCodes.INVALID_PROFILE_IMAGE);
         }
 
-        return new BasicResponse(true, Errors.IMAGE_CHANGE_SUCCESS);
+        return new BasicResponse(true, ErrorCodes.IMAGE_CHANGE_SUCCESS);
     }
 }

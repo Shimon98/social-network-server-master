@@ -13,7 +13,7 @@ import com.socialNetwork.server.auth.responses.MailResponse;
 import com.socialNetwork.server.auth.responses.PendingLoginResponse;
 import com.socialNetwork.server.auth.security.JwtService;
 import com.socialNetwork.server.auth.utils.ConstantLogger;
-import com.socialNetwork.server.auth.utils.Errors;
+import com.socialNetwork.server.auth.utils.ErrorCodes;
 import com.socialNetwork.server.auth.validators.AuthValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class LoginService {
         try {
             User user = getValidUserForLogin(request);
             if (user == null) {
-                return new PendingLoginResponse(false, Errors.INVALID_CREDENTIALS, null);
+                return new PendingLoginResponse(false, ErrorCodes.INVALID_CREDENTIALS, null);
             }
             String pendingLoginToken = jwtService.generatePendingLoginToken((long) user.getId(), user.getUsername(),
                     user.getEmail()
@@ -50,7 +50,7 @@ public class LoginService {
         } catch (Exception e) {
             logger.error(ConstantLogger.LOG_LOGIN_FAILED_USERNAME, request.getUsername(), e);
         }
-        return new PendingLoginResponse(false, Errors.INTERNAL_SERVER_ERROR, null);
+        return new PendingLoginResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR, null);
     }
 
     private User getValidUserForLogin(LoginRequest request) {
@@ -73,11 +73,11 @@ public class LoginService {
 
     public BasicResponse sendLoginCode(LoginCodeRequest request) {
         if (request == null) {
-            return sendCodeFailure(Errors.INVALID_SEND_CODE);
+            return sendCodeFailure(ErrorCodes.INVALID_SEND_CODE);
         }
         User user = authCommonService.getAuthUserFormToken(request.getTempToken());
         if (user == null) {
-            return sendCodeFailure(Errors.INVALID_SEND_CODE);
+            return sendCodeFailure(ErrorCodes.INVALID_SEND_CODE);
         }
         emailManager.sendLoginCode(user.getEmail());
         String token = request.getTempToken();
@@ -91,25 +91,25 @@ public class LoginService {
 
     public LoginResponse verifyLoginCode(LoginCodeAnswer request) {
         if (request == null) {
-            return loginFailure(Errors.INVALID_CREDENTIALS);
+            return loginFailure(ErrorCodes.INVALID_CREDENTIALS);
         }
         if (request.getCode() == null) {
-            return loginFailure(Errors.INVALID_CREDENTIALS);
+            return loginFailure(ErrorCodes.INVALID_CREDENTIALS);
         }
         try {
             User user = authCommonService.getAuthUserFormToken(request.getTempToken());
             if (user == null) {
-                return loginFailure(Errors.INVALID_CREDENTIALS);
+                return loginFailure(ErrorCodes.INVALID_CREDENTIALS);
             }
             boolean validCode = emailManager.verifyLoginCode(user.getEmail(), request.getCode());
             if (!validCode) {
-                return loginFailure(Errors.INVALID_CREDENTIALS);
+                return loginFailure(ErrorCodes.INVALID_CREDENTIALS);
             }
             return tokenService.createLoginTokens(user);
 
         } catch (Exception e) {
             logger.error("Failed to verify login code", e);
-            return loginFailure(Errors.INTERNAL_SERVER_ERROR);
+            return loginFailure(ErrorCodes.INTERNAL_SERVER_ERROR);
         }
     }
 

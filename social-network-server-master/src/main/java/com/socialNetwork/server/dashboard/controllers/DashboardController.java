@@ -1,6 +1,7 @@
 package com.socialNetwork.server.dashboard.controllers;
 
 import com.socialNetwork.server.auth.responses.BasicResponse;
+import com.socialNetwork.server.auth.utils.ErrorCodes;
 import com.socialNetwork.server.dashboard.requests.CreatePostRequest;
 import com.socialNetwork.server.dashboard.requests.UpdateProfileImageRequest;
 import com.socialNetwork.server.dashboard.responses.CurrentUserResponse;
@@ -9,8 +10,6 @@ import com.socialNetwork.server.dashboard.services.CurrentUserService;
 import com.socialNetwork.server.dashboard.services.DashboardService;
 import com.socialNetwork.server.dashboard.services.PostService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,76 +29,65 @@ public class DashboardController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
+    public CurrentUserResponse getCurrentUser(HttpServletRequest request) {
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
-            CurrentUserResponse response = dashboardService.getCurrentUser(currentUserId);
-
-            if (response == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-            }
-
-            return ResponseEntity.ok(response);
+            return dashboardService.getCurrentUser(currentUserId);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new CurrentUserResponse(false, ErrorCodes.UNAUTHORIZED);
         }
     }
 
     @GetMapping("/me/posts")
-    public ResponseEntity<?> getMyPosts(HttpServletRequest request) {
+    public FeedResponse getMyPosts(HttpServletRequest request) {
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
-            FeedResponse response = postService.getMyPosts(currentUserId);
-            return ResponseEntity.ok(response);
+            return postService.getMyPosts(currentUserId);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new FeedResponse(false, ErrorCodes.UNAUTHORIZED, null);
         }
     }
 
     @PutMapping("/profile-image")
-    public ResponseEntity<?> updateProfileImage(@RequestBody UpdateProfileImageRequest requestBody,
-                                                HttpServletRequest request) {
+    public BasicResponse updateProfileImage(@RequestBody UpdateProfileImageRequest requestBody,
+                                            HttpServletRequest request) {
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
-            BasicResponse response = dashboardService.updateProfileImage(currentUserId, requestBody.getProfileImageUrl());
-            return ResponseEntity.ok(response);
+            return dashboardService.updateProfileImage(currentUserId, requestBody.getProfileImageUrl());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new BasicResponse(false, ErrorCodes.UNAUTHORIZED);
         }
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<?> createPost(@RequestBody CreatePostRequest requestBody,
-                                        HttpServletRequest request) {
+    public BasicResponse createPost(@RequestBody CreatePostRequest requestBody,
+                                    HttpServletRequest request) {
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
-            BasicResponse response = postService.createPost(currentUserId, requestBody.getContent());
-            return ResponseEntity.ok(response);
+            return postService.createPost(currentUserId, requestBody.getContent());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new BasicResponse(false, ErrorCodes.UNAUTHORIZED);
         }
     }
 
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<?> deletePost(@PathVariable Long postId,
-                                        HttpServletRequest request) {
+    public BasicResponse deletePost(@PathVariable Long postId,
+                                    HttpServletRequest request) {
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
-            BasicResponse response = postService.deletePost(currentUserId, postId);
-            return ResponseEntity.ok(response);
+            return postService.deletePost(currentUserId, postId);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new BasicResponse(false, ErrorCodes.UNAUTHORIZED);
         }
     }
 
     @GetMapping("/feed")
-    public ResponseEntity<?> getFeed(HttpServletRequest request) {
+    public FeedResponse getFeed(HttpServletRequest request) {
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
-            FeedResponse response = postService.getFeed(currentUserId);
-            return ResponseEntity.ok(response);
+            return postService.getFeed(currentUserId);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new FeedResponse(false, ErrorCodes.UNAUTHORIZED, null);
         }
     }
 }

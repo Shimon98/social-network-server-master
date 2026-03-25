@@ -1,6 +1,8 @@
 package com.socialNetwork.server.dashboard.responses;
 
-public class CurrentUserResponse {
+import com.socialNetwork.server.auth.responses.BasicResponse;
+
+public class CurrentUserResponse extends BasicResponse {
     private Long id;
     private String username;
     private String profilePicture;
@@ -8,7 +10,11 @@ public class CurrentUserResponse {
     public CurrentUserResponse() {
     }
 
-    public CurrentUserResponse(Long id, String username, String profilePicture) {
+    public CurrentUserResponse(boolean success, Integer errorCode) {
+    }
+
+    public CurrentUserResponse(boolean success, Integer errorCode, Long id, String username, String profilePicture) {
+        super(success, errorCode);
         this.id = id;
         this.username = username;
         this.profilePicture = profilePicture;

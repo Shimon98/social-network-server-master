@@ -1,8 +1,10 @@
 package com.socialNetwork.server.dashboard.responses;
 
+import com.socialNetwork.server.auth.responses.BasicResponse;
+
 import java.sql.Timestamp;
 
-public class PostResponse {
+public class PostResponse extends BasicResponse {
     private Long id;
     private String content;
     private Timestamp createdAt;
@@ -12,7 +14,8 @@ public class PostResponse {
     public PostResponse() {
     }
 
-    public PostResponse(Long id, String content, Timestamp createdAt, String username, String profilePicture) {
+    public PostResponse(boolean success, Integer errorCode, Long id, String content, Timestamp createdAt, String username, String profilePicture) {
+        super(success,errorCode);
         this.id = id;
         this.content = content;
         this.createdAt = createdAt;

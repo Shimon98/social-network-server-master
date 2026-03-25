@@ -1,6 +1,6 @@
 package com.socialNetwork.server.auth.utils;
 
-public class Errors {
+public class ErrorCodes {
     public static final int INVALID_REQUEST = 1000;
 
     public static final int MISSING_USERNAME = 1001;
@@ -34,6 +34,13 @@ public class Errors {
     public static final int POST_SUCCESS = 7007; //"Post created successfully"
     public static final int POST_DELETE_FAILURE = 7008; //"Failed to delete post"
     public static final int POST_DELETE_SUCCESS = 7009; //"Post deleted successfully"
+    public static final int GET_FEED_SUCCESS = 7010;
+
+    public static final int UNAUTHORIZED = 401;
+    public static final int USER_NOT_FOUND = 4041;
+    public static final int INVALID_POST = 4001;
+    public static final int POST_NOT_FOUND = 4042;
+    public static final int FORBIDDEN = 4031;
 
 
 

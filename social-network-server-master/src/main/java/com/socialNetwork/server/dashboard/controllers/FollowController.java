@@ -1,6 +1,7 @@
 package com.socialNetwork.server.dashboard.controllers;
 
 import com.socialNetwork.server.auth.responses.BasicResponse;
+import com.socialNetwork.server.auth.utils.ErrorCodes;
 import com.socialNetwork.server.dashboard.requests.FollowUserRequest;
 import com.socialNetwork.server.dashboard.requests.SearchRequest;
 import com.socialNetwork.server.dashboard.responses.FollowingResponse;
@@ -8,66 +9,61 @@ import com.socialNetwork.server.dashboard.responses.SearchUsersResponse;
 import com.socialNetwork.server.dashboard.services.CurrentUserService;
 import com.socialNetwork.server.dashboard.services.FollowService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/follows")
+@RequestMapping("/dashboard")
 public class FollowController {
 
     private final FollowService followService;
     private final CurrentUserService currentUserService;
 
-    public FollowController(FollowService followService, CurrentUserService currentUserService) {
+    public FollowController(FollowService followService,
+                            CurrentUserService currentUserService) {
         this.followService = followService;
         this.currentUserService = currentUserService;
     }
 
     @PostMapping("/search")
-    public ResponseEntity<?> searchUsers(@RequestBody SearchRequest textRequest,
-                                         HttpServletRequest request) {
-        String text = textRequest.getText();
+    public SearchUsersResponse searchUsers(@RequestBody SearchRequest requestBody,
+                                           HttpServletRequest request) {
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
-            SearchUsersResponse response = followService.searchUsers(currentUserId, text);
-            return ResponseEntity.ok(response);
+            return followService.searchUsers(currentUserId, requestBody.getText());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new SearchUsersResponse(false, ErrorCodes.UNAUTHORIZED, null);
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> followUser(@RequestBody FollowUserRequest requestBody,
-                                        HttpServletRequest request) {
+    @PostMapping("/follow")
+    public BasicResponse followUser(@RequestBody FollowUserRequest requestBody,
+                                    HttpServletRequest request) {
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
-            BasicResponse response = followService.followUser(currentUserId, requestBody.getFollowedUserId());
-            return ResponseEntity.ok(response);
+            return followService.followUser(currentUserId, requestBody.getFollowedUserId());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new BasicResponse(false, ErrorCodes.UNAUTHORIZED);
+        }
+    }
+
+    @DeleteMapping("/follow")
+    public BasicResponse unfollowUser(@RequestBody FollowUserRequest requestBody,
+                                      HttpServletRequest request) {
+        try {
+            Long currentUserId = currentUserService.extractCurrentUserId(request);
+            return followService.unfollowUser(currentUserId, requestBody.getFollowedUserId());
+        } catch (RuntimeException e) {
+            return new BasicResponse(false, ErrorCodes.UNAUTHORIZED);
         }
     }
 
     @GetMapping("/following")
-    public ResponseEntity<?> getFollowingUsers(HttpServletRequest request) {
+    public FollowingResponse getFollowingUsers(HttpServletRequest request) {
         try {
             Long currentUserId = currentUserService.extractCurrentUserId(request);
-            FollowingResponse response = followService.getFollowingUsers(currentUserId);
-            return ResponseEntity.ok(response);
+            return followService.getFollowingUsers(currentUserId);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
-    }
-    @DeleteMapping
-    public ResponseEntity<?> unfollowUser(@RequestBody FollowUserRequest requestBody,
-                                          HttpServletRequest request) {
-        try {
-            Long currentUserId = currentUserService.extractCurrentUserId(request);
-            BasicResponse response = followService.unfollowUser(currentUserId, requestBody.getFollowedUserId());
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new FollowingResponse(false, ErrorCodes.UNAUTHORIZED, null);
         }
     }
 }

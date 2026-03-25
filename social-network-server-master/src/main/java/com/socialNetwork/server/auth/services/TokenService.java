@@ -7,7 +7,7 @@ import com.socialNetwork.server.auth.responses.BasicResponse;
 import com.socialNetwork.server.auth.responses.LoginResponse;
 import com.socialNetwork.server.auth.security.JwtService;
 import com.socialNetwork.server.auth.utils.ConstantLogger;
-import com.socialNetwork.server.auth.utils.Errors;
+import com.socialNetwork.server.auth.utils.ErrorCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -36,14 +36,14 @@ public class TokenService {
 
             boolean saved = dbManager.saveRefreshToken(refreshToken);
             if (!saved) {
-                return new LoginResponse(false, Errors.INTERNAL_SERVER_ERROR, null, null);
+                return new LoginResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR, null, null);
             }
 
             return new LoginResponse(true, null, accessToken, refreshTokenValue);
 
         } catch (Exception e) {
             logger.error(ConstantLogger.LOG_REFRESH_TOKEN_ERROR, e);
-            return new LoginResponse(false, Errors.INTERNAL_SERVER_ERROR, null, null);
+            return new LoginResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR, null, null);
         }
     }
 

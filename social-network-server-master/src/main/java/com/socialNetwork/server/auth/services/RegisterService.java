@@ -76,7 +76,7 @@ import com.socialNetwork.server.auth.responses.RegisterCodeVerifyResponse;
 import com.socialNetwork.server.auth.responses.RegisterResponse;
 import com.socialNetwork.server.auth.security.JwtService;
 import com.socialNetwork.server.auth.utils.ConstantLogger;
-import com.socialNetwork.server.auth.utils.Errors;
+import com.socialNetwork.server.auth.utils.ErrorCodes;
 import com.socialNetwork.server.auth.validators.AuthValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,46 +102,46 @@ public class RegisterService {
     public BasicResponse sendRegisterCode(EmailRequest request) {
         try {
             if (request == null || request.getEmail() == null || request.getEmail().isBlank()) {
-                return new BasicResponse(false, Errors.REGISTRATION_FAILED);
+                return new BasicResponse(false, ErrorCodes.REGISTRATION_FAILED);
             }
             String normalizedEmail = authCommonService.normalizeEmail(request.getEmail());
             if (dbManager.userExists("", normalizedEmail)) {
-                return new BasicResponse(false, Errors.USER_ALREADY_EXISTS);
+                return new BasicResponse(false, ErrorCodes.USER_ALREADY_EXISTS);
             }
             emailManager.sendRegisterCode(normalizedEmail);
             return new BasicResponse(true, null);
 
         } catch (Exception e) {
             logger.error("Failed to send register code for email {}", request.getEmail(), e);
-            return new BasicResponse(false, Errors.INTERNAL_SERVER_ERROR);
+            return new BasicResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
     public RegisterCodeVerifyResponse verifyRegisterCode(RegisterCodeRequest request) {
         try {
             if (request == null || request.getEmail() == null || request.getCode() == null) {
-                return new RegisterCodeVerifyResponse(false, Errors.REGISTRATION_FAILED, null);
+                return new RegisterCodeVerifyResponse(false, ErrorCodes.REGISTRATION_FAILED, null);
             }
             String normalizedEmail = authCommonService.normalizeEmail(request.getEmail());
             boolean validCode = emailManager.verifyRegisterCode(normalizedEmail, request.getCode());
             if (!validCode) {
-                return new RegisterCodeVerifyResponse(false, Errors.INVALID_CREDENTIALS, null);
+                return new RegisterCodeVerifyResponse(false, ErrorCodes.INVALID_CREDENTIALS, null);
             }
             String registrationToken = jwtService.generatePendingRegisterToken(normalizedEmail);
             return new RegisterCodeVerifyResponse(true, null, registrationToken);
         } catch (Exception e) {
             logger.error("Failed to verify register code for email {}", request.getEmail(), e);
-            return new RegisterCodeVerifyResponse(false, Errors.INTERNAL_SERVER_ERROR, null);
+            return new RegisterCodeVerifyResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR, null);
         }
     }
 
     public RegisterResponse register(RegisterCompleteRequest request) {
         try {
             if (request == null || request.getRegistrationToken() == null || request.getRegistrationToken().isBlank()) {
-                return registerFailure(Errors.REGISTRATION_FAILED);
+                return registerFailure(ErrorCodes.REGISTRATION_FAILED);
             }
             if(!validToken(request.getRegistrationToken())) {
-                return registerFailure(Errors.INVALID_TOKEN);
+                return registerFailure(ErrorCodes.INVALID_TOKEN);
             }
             String emailFromToken = jwtService.extractEmail(request.getRegistrationToken());
             Integer validationErrorCode = validationErrorCode(request, emailFromToken);
@@ -150,16 +150,16 @@ public class RegisterService {
             }
             User user = createUser(request,emailFromToken);
             if (dbManager.userExists(user.getUsername(), user.getEmail())) {
-                return registerFailure(Errors.USER_ALREADY_EXISTS);
+                return registerFailure(ErrorCodes.USER_ALREADY_EXISTS);
             }
             if (!ifInsertedNewUser(user)) {
-                return registerFailure(Errors.REGISTRATION_FAILED);
+                return registerFailure(ErrorCodes.REGISTRATION_FAILED);
             }
             return new RegisterResponse(true, null);
 
         } catch (Exception e) {
             logger.error(ConstantLogger.LOG_REGISTER_UNEXPECTED_ERROR, request.getUsername(), e);
-            return registerFailure(Errors.INTERNAL_SERVER_ERROR);
+            return registerFailure(ErrorCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
