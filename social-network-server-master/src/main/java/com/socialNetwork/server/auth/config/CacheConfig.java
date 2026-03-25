@@ -15,8 +15,9 @@ public class CacheConfig {
     public CacheManager cacheManager() {
 
         CaffeineCacheManager manager =
-                new CaffeineCacheManager("categories",
-                        "productsByCategory", "users", "verificationCodes"
+                new CaffeineCacheManager("users",
+                        "verificationCodes",
+                        "userPosts"
                 );
 
         manager.setCaffeine(

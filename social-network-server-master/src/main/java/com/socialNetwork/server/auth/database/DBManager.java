@@ -8,6 +8,8 @@ import com.socialNetwork.server.dashboard.responses.PostResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -267,6 +269,7 @@ public class DBManager {
         return users;
     }
 
+    @CacheEvict(value = "userPosts", key = "#userId")
     public boolean createPost(Long userId, String content) {
         String sql = "INSERT INTO posts (user_id, content) VALUES (?, ?)";
         try {
@@ -281,6 +284,7 @@ public class DBManager {
         }
         return false;
     }
+
 
     public List<PostResponse> getFeedPosts(Long currentUserId) {
         List<PostResponse> posts = new ArrayList<>();
@@ -331,6 +335,8 @@ public class DBManager {
         }
         return false;
     }
+
+    @CacheEvict(value = "userPosts", key = "#currentUserId")
     public boolean deletePost(Long postId, Long currentUserId) {
         String sql = "DELETE FROM posts WHERE id = ? AND user_id = ?";
         try {
@@ -345,21 +351,19 @@ public class DBManager {
         }
         return false;
     }
+
+    @Cacheable(value = "userPosts", key = "#userId", unless = "#result == null")
     public List<PostResponse> getPostsByUserId(Long userId) {
         List<PostResponse> posts = new ArrayList<>();
-
         String sql = "SELECT p.id, p.content, p.created_at, u.username, u.profile_image_url " +
                 "FROM posts p " +
                 "JOIN users u ON p.user_id = u.id " +
                 "WHERE p.user_id = ? " +
                 "ORDER BY p.created_at DESC";
-
         try {
             PreparedStatement statement = this.connection.prepareStatement(sql);
             statement.setLong(1, userId);
-
             ResultSet resultSet = statement.executeQuery();
-
             while (resultSet.next()) {
                 PostResponse post = new PostResponse();
                 post.setId(resultSet.getLong("id"));
@@ -371,9 +375,10 @@ public class DBManager {
                 post.setErrorCode(null);
                 posts.add(post);
             }
+            return posts;
         } catch (SQLException e) {
             logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage(), e);
+            return null;
         }
-        return posts;
     }
 }
