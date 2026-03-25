@@ -6,17 +6,17 @@ public class UserPreviewResponse extends BasicResponse {
     private Long id;
     private String username;
     private String profilePicture;
-    private boolean isFollowing;
+    private boolean following;
 
     public UserPreviewResponse() {
     }
 
-    public UserPreviewResponse(boolean success, Integer errorCode,Long id, String username, String profilePicture, boolean isFollowing) {
+    public UserPreviewResponse(boolean success, Integer errorCode,Long id, String username, String profilePicture, boolean following) {
         super(success,errorCode);
         this.id = id;
         this.username = username;
         this.profilePicture = profilePicture;
-        this.isFollowing = isFollowing;
+        this.following = following;
     }
 
     public Long getId() {
@@ -44,10 +44,10 @@ public class UserPreviewResponse extends BasicResponse {
     }
 
     public boolean isFollowing() {
-        return isFollowing;
+        return following;
     }
 
     public void setFollowing(boolean following) {
-        isFollowing = following;
+        this.following = following;
     }
 }

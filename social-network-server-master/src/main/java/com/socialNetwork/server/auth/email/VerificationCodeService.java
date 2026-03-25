@@ -22,11 +22,11 @@ public class VerificationCodeService {
     }
 
     public VerificationCode crateLoginCode(String email){
-        return crateCode(email, TempCodePurpose.LOGIN_PURPOSE);
+        return createCode(email, TempCodePurpose.LOGIN_PURPOSE);
     }
 
     public VerificationCode crateRegisterCode(String email){
-        return crateCode(email, TempCodePurpose.REGISTER_PURPOSE);
+        return createCode(email, TempCodePurpose.REGISTER_PURPOSE);
     }
 
     public boolean ifCanUseLoginCode(String email, String code){
@@ -37,7 +37,7 @@ public class VerificationCodeService {
         return ifCanUseCode(TempCodePurpose.REGISTER_PURPOSE , email, code );
     }
 
-    private VerificationCode crateCode(String email , TempCodePurpose purpose){
+    private VerificationCode createCode(String email , TempCodePurpose purpose){
         VerificationCode verificationCode = new VerificationCode(purpose,email, generateCode());
         String key = buildKey(purpose, email);
         this.codeCache.put(key, verificationCode);
