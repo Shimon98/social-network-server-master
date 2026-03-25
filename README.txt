@@ -4,8 +4,6 @@
 4. Run the Spring Boot project
 
 
-
-
 Important
 
 The server will not start correctly unless JWT_SECRET is defined.
