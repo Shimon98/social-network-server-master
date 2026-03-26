@@ -1,7 +1,6 @@
 
 package com.socialNetwork.server.auth.services;
 
-import com.socialNetwork.server.auth.database.DBManager;
 import com.socialNetwork.server.auth.database.UserRepository;
 import com.socialNetwork.server.auth.email.EmailManager;
 import com.socialNetwork.server.auth.entity.User;
@@ -19,7 +18,6 @@ import com.socialNetwork.server.auth.validators.AuthValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import static com.socialNetwork.server.auth.utils.ConstantLogger.LOG_REGISTER_SEND_CODE_ERROR;
 import static com.socialNetwork.server.auth.utils.ConstantLogger.LOG_REGISTER_VERIFY_CODE_ERROR;
@@ -30,18 +28,15 @@ public class RegisterService {
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
     private final UserRepository userRepository;
 
-//    private DBManager dbManager;
     private AuthCommonService authCommonService;
     private EmailManager emailManager;
     private JwtService jwtService;
 
     public RegisterService(AuthCommonService authCommonService, EmailManager emailManager, JwtService jwtService, UserRepository userRepository) {
-//        this.dbManager = dbManager;
         this.userRepository = userRepository;
         this.authCommonService = authCommonService;
         this.emailManager = emailManager;
         this.jwtService = jwtService;
-
     }
 
 
@@ -68,12 +63,8 @@ public class RegisterService {
         if (userRepository.userExists("", normalizedEmail)) {
             return false;
         }
-//        if (dbManager.userExists("", normalizedEmail)) {
-//            return false;
-//        }
         return true;
     }
-
 
     public BasicResponse sendRegisterCode(EmailRequest request) {
         try {
@@ -122,12 +113,9 @@ public class RegisterService {
                 return registerFailure(validationErrorCode);
             }
             User user = createUser(request, emailFromToken);
-            if (userRepository.userExists(user.getUsername(),user.getEmail())){
+            if (userRepository.userExists(user.getUsername(), user.getEmail())) {
                 return registerFailure(ErrorCodes.USER_ALREADY_EXISTS);
             }
-//            if (dbManager.userExists(user.getUsername(), user.getEmail())) {
-//                return registerFailure(ErrorCodes.USER_ALREADY_EXISTS);
-//            }
             if (!ifInsertedNewUser(user)) {
                 return registerFailure(ErrorCodes.REGISTRATION_FAILED);
             }
@@ -158,9 +146,7 @@ public class RegisterService {
     }
 
     private Boolean ifInsertedNewUser(User user) {
-//        return dbManager.createUserOnDb(user);
         return userRepository.createUser(user);
-
     }
 
     private User createUser(RegisterCompleteRequest request, String email) {

@@ -1,6 +1,5 @@
 package com.socialNetwork.server.auth.services;
 
-import com.socialNetwork.server.auth.database.DBManager;
 import com.socialNetwork.server.auth.database.UserRepository;
 import com.socialNetwork.server.auth.entity.User;
 import com.socialNetwork.server.auth.hashing.PasswordHashUtil;
@@ -13,8 +12,6 @@ import org.springframework.stereotype.Service;
 public class AuthCommonService {
     @Autowired
     private JwtService jwtService;
-//    @Autowired
-//    private DBManager dbManager;
     @Autowired
     private UserRepository userRepository;
 
@@ -51,7 +48,6 @@ public class AuthCommonService {
         String usernameFromToken = jwtService.extractUsername(token);
         String normalizedUsername = normalizeUsername(usernameFromToken);
         User user = userRepository.findUserByUsername(normalizedUsername);
-//        User user = dbManager.findUserByUsername(normalizedUsername);
         return user;
     }
 

@@ -1,6 +1,5 @@
 package com.socialNetwork.server.auth.services;
 
-import com.socialNetwork.server.auth.database.DBManager;
 import com.socialNetwork.server.auth.database.RefreshTokenRepository;
 import com.socialNetwork.server.auth.entity.RefreshToken;
 import com.socialNetwork.server.auth.entity.User;
@@ -19,37 +18,25 @@ public class TokenService {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
     private final RefreshTokenRepository refreshTokenRepository;
-//    private final DBManager dbManager;
     private final JwtService jwtService;
 
 
-    public TokenService( JwtService jwtService, RefreshTokenRepository refreshTokenRepository) {
-//        this.dbManager = dbManager;
+    public TokenService(JwtService jwtService, RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtService = jwtService;
-
     }
 
     public LoginResponse createLoginTokens(User user) {
         try {
             String accessToken = jwtService.generateAccessToken(user.getId(), user.getUsername());
             String refreshTokenValue = jwtService.generateRefreshToken(user.getId(), user.getUsername());
-
             RefreshToken refreshToken = createRefreshToken((int) user.getId(), refreshTokenValue);
-
             refreshTokenRepository.deleteRefreshTokensByUserId((int) user.getId());
-
-//            dbManager.deleteRefreshTokensByUserId((int) user.getId());
-
             boolean saved = refreshTokenRepository.saveRefreshToken(refreshToken);
-
-//            boolean saved = dbManager.saveRefreshToken(refreshToken);
             if (!saved) {
                 return new LoginResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR, null, null);
             }
-
             return new LoginResponse(true, null, accessToken, refreshTokenValue);
-
         } catch (Exception e) {
             logger.error(ConstantLogger.LOG_REFRESH_TOKEN_ERROR, e);
             return new LoginResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR, null, null);
@@ -61,27 +48,19 @@ public class TokenService {
             if (refreshTokenValue == null || refreshTokenValue.isBlank()) {
                 return null;
             }
-
             if (!jwtService.isTokenValid(refreshTokenValue)) {
                 return null;
             }
-
             RefreshToken savedToken = refreshTokenRepository.findRefreshToken(refreshTokenValue);
-
-//            RefreshToken savedToken = dbManager.findRefreshToken(refreshTokenValue);
             if (savedToken == null) {
                 return null;
             }
-
             if (!Constants.REFRESH.equals(jwtService.extractTokenType(refreshTokenValue))) {
                 return null;
             }
-
             Long userId = jwtService.extractUserId(refreshTokenValue);
             String username = jwtService.extractUsername(refreshTokenValue);
-
             return jwtService.generateAccessToken(userId, username);
-
         } catch (Exception e) {
             logger.error(ConstantLogger.LOG_REFRESH_TOKEN_ERROR, e);
             return null;
@@ -92,20 +71,15 @@ public class TokenService {
         if (refreshTokenValue == null || refreshTokenValue.isBlank()) {
             return new BasicResponse(true, null);
         }
-
         boolean deleted = refreshTokenRepository.deleteRefreshToken(refreshTokenValue);
-
-//        boolean deleted = dbManager.deleteRefreshToken(refreshTokenValue);
         if (!deleted) {
             return new BasicResponse(true, null);
         }
-
         return new BasicResponse(true, null);
     }
 
     private RefreshToken createRefreshToken(Integer userId, String tokenValue) {
         long now = System.currentTimeMillis();
-
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUserId(userId);
         refreshToken.setToken(tokenValue);

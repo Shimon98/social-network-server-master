@@ -52,11 +52,11 @@ public class AuthManager {
         return tokenService.logout(refreshTokenValue);
     }
 
-    public BasicResponse sendLoginCode  (LoginCodeRequest request) {
+    public BasicResponse sendLoginCode(LoginCodeRequest request) {
         return loginService.sendLoginCode(request);
     }
 
-    public BasicResponse checkRegisterEmail( EmailRequest request){
+    public BasicResponse checkRegisterEmail(EmailRequest request) {
         return this.registerService.checkMail(request);
     }
 }

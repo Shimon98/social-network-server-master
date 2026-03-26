@@ -53,17 +53,14 @@ public class AuthCookieService {
 
     public String getCookieValue(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
-
         if (cookies == null) {
             return null;
         }
-
         for (Cookie cookie : cookies) {
             if (cookieName.equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }
-
         return null;
     }
 

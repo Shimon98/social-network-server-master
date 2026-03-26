@@ -1,6 +1,5 @@
 package com.socialNetwork.server.dashboard.services;
 
-import com.socialNetwork.server.auth.database.DBManager;
 import com.socialNetwork.server.auth.database.FollowRepository;
 import com.socialNetwork.server.auth.database.PostRepository;
 import com.socialNetwork.server.auth.database.UserRepository;
@@ -14,14 +13,11 @@ import java.util.List;
 
 @Service
 public class PostService {
-
-//    private final DBManager dbManager;
     private final PostRepository postRepository;
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
-    public PostService( PostRepository postRepository, FollowRepository followRepository, UserRepository userRepository) {
-//        this.dbManager = dbManager;
+    public PostService(PostRepository postRepository, FollowRepository followRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.followRepository = followRepository;
         this.userRepository = userRepository;
@@ -35,7 +31,6 @@ public class PostService {
         if (content.isEmpty()) {
             return new BasicResponse(false, ErrorCodes.POST_FAILURE);
         }
-//        boolean created = dbManager.createPost(currentUserId, content);
         boolean created = postRepository.createPost(currentUserId, content);
         if (!created) {
             return new BasicResponse(false, ErrorCodes.POST_FAILURE);
@@ -44,17 +39,14 @@ public class PostService {
     }
 
     public FeedResponse getFeed(Long currentUserId) {
-//        List<PostResponse> posts = dbManager.getFeedPosts(currentUserId);
         List<PostResponse> posts = postRepository.getFeedPosts(currentUserId);
         return new FeedResponse(true, ErrorCodes.GET_FEED_SUCCESS, posts);
     }
-
 
     public BasicResponse deletePost(Long currentUserId, Long postId) {
         if (currentUserId == null || postId == null) {
             return new BasicResponse(false, ErrorCodes.POST_DELETE_FAILURE);
         }
-//        boolean deleted = dbManager.deletePost(postId, currentUserId);
         boolean deleted = postRepository.deletePost(postId, currentUserId);
         if (!deleted) {
             return new BasicResponse(false, ErrorCodes.POST_DELETE_FAILURE);
@@ -63,28 +55,22 @@ public class PostService {
     }
 
     public FeedResponse getMyPosts(Long currentUserId) {
-//        List<PostResponse> posts = dbManager.getPostsByUserId(currentUserId);
         List<PostResponse> posts = postRepository.getPostsByUserId(currentUserId);
         return new FeedResponse(true, null, posts);
     }
+
     public FeedResponse getUserPosts(Long currentUserId, Long userId) {
         if (currentUserId == null || userId == null) {
             return new FeedResponse(false, ErrorCodes.GET_FEED_FAILURE, null);
         }
-
-//        boolean allowed = currentUserId.equals(userId) || dbManager.isFollowing(currentUserId, userId);
         boolean allowed = currentUserId.equals(userId) || followRepository.isFollowing(currentUserId, userId);
         if (!allowed) {
             return new FeedResponse(false, ErrorCodes.GET_FEED_FAILURE, null);
         }
-
-//        boolean userExists = dbManager.userExistsById(userId);
         boolean userExists = userRepository.userExistsById(userId);
         if (!userExists) {
             return new FeedResponse(false, ErrorCodes.GET_FEED_FAILURE, null);
         }
-
-//        List<PostResponse> posts = dbManager.getPostsByUserId(userId);
         List<PostResponse> posts = postRepository.getPostsByUserId(userId);
         return new FeedResponse(true, null, posts);
     }
