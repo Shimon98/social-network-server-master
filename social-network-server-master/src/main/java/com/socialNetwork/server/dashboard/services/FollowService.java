@@ -1,6 +1,8 @@
 package com.socialNetwork.server.dashboard.services;
 
 import com.socialNetwork.server.auth.database.DBManager;
+import com.socialNetwork.server.auth.database.FollowRepository;
+import com.socialNetwork.server.auth.database.UserRepository;
 import com.socialNetwork.server.auth.entity.User;
 import com.socialNetwork.server.auth.responses.BasicResponse;
 import com.socialNetwork.server.auth.utils.ErrorCodes;
@@ -15,18 +17,24 @@ import java.util.List;
 @Service
 public class FollowService {
 
-    private final DBManager dbManager;
+//    private final DBManager dbManager;
+    private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
-    public FollowService(DBManager dbManager) {
-        this.dbManager = dbManager;
+    public FollowService(UserRepository userRepository, FollowRepository followRepository) {
+//        this.dbManager = dbManager;
+        this.userRepository = userRepository;
+        this.followRepository = followRepository;
     }
 
     public SearchUsersResponse searchUsers(Long currentUserId, String text) {
-        List<User> users = dbManager.searchUsersByUsername(currentUserId, text);
+//        List<User> users = dbManager.searchUsersByUsername(currentUserId, text);
+        List<User> users = userRepository.searchUsersByUsername(currentUserId, text);
         List<UserPreviewResponse> result = new ArrayList<>();
 
         for (User user : users) {
-            boolean isFollowing = dbManager.isFollowing(currentUserId, user.getId());
+//            boolean isFollowing = dbManager.isFollowing(currentUserId, user.getId());
+            boolean isFollowing = followRepository.isFollowing(currentUserId, user.getId());
 
             result.add(new UserPreviewResponse(
                     true,
@@ -46,12 +54,14 @@ public class FollowService {
             return new BasicResponse(false, ErrorCodes.FOLLOW_FAILURE);
         }
 
-        boolean alreadyFollowing = dbManager.isFollowing(currentUserId, followedUserId);
+//        boolean alreadyFollowing = dbManager.isFollowing(currentUserId, followedUserId);
+        boolean alreadyFollowing = followRepository.isFollowing(currentUserId, followedUserId);
         if (alreadyFollowing) {
             return new BasicResponse(false, ErrorCodes.FOLLOW_FAILURE);
         }
 
-        boolean created = dbManager.createFollow(currentUserId, followedUserId);
+//        boolean created = dbManager.createFollow(currentUserId, followedUserId);
+        boolean created = followRepository.createFollow(currentUserId, followedUserId);
         if (!created) {
             return new BasicResponse(false, ErrorCodes.FOLLOW_FAILURE);
         }
@@ -60,7 +70,8 @@ public class FollowService {
     }
 
     public FollowingResponse getFollowingUsers(Long currentUserId) {
-        List<User> users = dbManager.getFollowingUsers(currentUserId);
+//        List<User> users = dbManager.getFollowingUsers(currentUserId);
+        List<User> users = followRepository.getFollowingUsers(currentUserId);
         List<UserPreviewResponse> result = new ArrayList<>();
 
         for (User user : users) {
@@ -81,11 +92,13 @@ public class FollowService {
         if (currentUserId.equals(followedUserId)) {
             return new BasicResponse(false, ErrorCodes.UNFOLLOW_FAILURE);
         }
-        boolean isFollowing = dbManager.isFollowing(currentUserId, followedUserId);
+//        boolean isFollowing = dbManager.isFollowing(currentUserId, followedUserId);
+        boolean isFollowing = followRepository.isFollowing(currentUserId, followedUserId);
         if (!isFollowing) {
             return new BasicResponse(false, ErrorCodes.UNFOLLOW_FAILURE);
         }
-        boolean removed = dbManager.removeFollow(currentUserId, followedUserId);
+//        boolean removed = dbManager.removeFollow(currentUserId, followedUserId);
+        boolean removed = followRepository.removeFollow(currentUserId, followedUserId);
         if (!removed) {
             return new BasicResponse(false, ErrorCodes.UNFOLLOW_FAILURE);
         }

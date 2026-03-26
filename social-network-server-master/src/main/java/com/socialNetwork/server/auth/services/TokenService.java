@@ -1,6 +1,7 @@
 package com.socialNetwork.server.auth.services;
 
 import com.socialNetwork.server.auth.database.DBManager;
+import com.socialNetwork.server.auth.database.RefreshTokenRepository;
 import com.socialNetwork.server.auth.entity.RefreshToken;
 import com.socialNetwork.server.auth.entity.User;
 import com.socialNetwork.server.auth.responses.BasicResponse;
@@ -17,25 +18,32 @@ import org.springframework.stereotype.Service;
 public class TokenService {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
-
-    private final DBManager dbManager;
+    private final RefreshTokenRepository refreshTokenRepository;
+//    private final DBManager dbManager;
     private final JwtService jwtService;
 
-    public TokenService(DBManager dbManager, JwtService jwtService) {
-        this.dbManager = dbManager;
+
+    public TokenService( JwtService jwtService, RefreshTokenRepository refreshTokenRepository) {
+//        this.dbManager = dbManager;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.jwtService = jwtService;
+
     }
 
     public LoginResponse createLoginTokens(User user) {
         try {
-            String accessToken = jwtService.generateAccessToken((long) user.getId(), user.getUsername());
-            String refreshTokenValue = jwtService.generateRefreshToken((long) user.getId(), user.getUsername());
+            String accessToken = jwtService.generateAccessToken(user.getId(), user.getUsername());
+            String refreshTokenValue = jwtService.generateRefreshToken(user.getId(), user.getUsername());
 
             RefreshToken refreshToken = createRefreshToken((int) user.getId(), refreshTokenValue);
 
-            dbManager.deleteRefreshTokensByUserId((int) user.getId());
+            refreshTokenRepository.deleteRefreshTokensByUserId((int) user.getId());
 
-            boolean saved = dbManager.saveRefreshToken(refreshToken);
+//            dbManager.deleteRefreshTokensByUserId((int) user.getId());
+
+            boolean saved = refreshTokenRepository.saveRefreshToken(refreshToken);
+
+//            boolean saved = dbManager.saveRefreshToken(refreshToken);
             if (!saved) {
                 return new LoginResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR, null, null);
             }
@@ -58,7 +66,9 @@ public class TokenService {
                 return null;
             }
 
-            RefreshToken savedToken = dbManager.findRefreshToken(refreshTokenValue);
+            RefreshToken savedToken = refreshTokenRepository.findRefreshToken(refreshTokenValue);
+
+//            RefreshToken savedToken = dbManager.findRefreshToken(refreshTokenValue);
             if (savedToken == null) {
                 return null;
             }
@@ -83,7 +93,9 @@ public class TokenService {
             return new BasicResponse(true, null);
         }
 
-        boolean deleted = dbManager.deleteRefreshToken(refreshTokenValue);
+        boolean deleted = refreshTokenRepository.deleteRefreshToken(refreshTokenValue);
+
+//        boolean deleted = dbManager.deleteRefreshToken(refreshTokenValue);
         if (!deleted) {
             return new BasicResponse(true, null);
         }

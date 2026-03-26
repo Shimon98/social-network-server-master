@@ -2,6 +2,7 @@
 package com.socialNetwork.server.auth.services;
 
 import com.socialNetwork.server.auth.database.DBManager;
+import com.socialNetwork.server.auth.database.UserRepository;
 import com.socialNetwork.server.auth.email.EmailManager;
 import com.socialNetwork.server.auth.entity.User;
 import com.socialNetwork.server.auth.requests.EmailRequest;
@@ -27,17 +28,20 @@ import static com.socialNetwork.server.auth.utils.Constants.PENDING_REGISTER;
 @Service
 public class RegisterService {
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
+    private final UserRepository userRepository;
 
-    private DBManager dbManager;
+//    private DBManager dbManager;
     private AuthCommonService authCommonService;
     private EmailManager emailManager;
     private JwtService jwtService;
 
-    public RegisterService(DBManager dbManager, AuthCommonService authCommonService, EmailManager emailManager, JwtService jwtService) {
-        this.dbManager = dbManager;
+    public RegisterService(AuthCommonService authCommonService, EmailManager emailManager, JwtService jwtService, UserRepository userRepository) {
+//        this.dbManager = dbManager;
+        this.userRepository = userRepository;
         this.authCommonService = authCommonService;
         this.emailManager = emailManager;
         this.jwtService = jwtService;
+
     }
 
 
@@ -54,22 +58,26 @@ public class RegisterService {
 
     private boolean validateEmail(EmailRequest request) {
         if (request == null || request.getEmail() == null || request.getEmail().isBlank()) {
-            return false;}
+            return false;
+        }
         return true;
     }
 
     private boolean authEmail(EmailRequest request) {
         String normalizedEmail = authCommonService.normalizeEmail(request.getEmail());
-        if (dbManager.userExists("", normalizedEmail)) {
+        if (userRepository.userExists("", normalizedEmail)) {
             return false;
         }
+//        if (dbManager.userExists("", normalizedEmail)) {
+//            return false;
+//        }
         return true;
     }
 
 
     public BasicResponse sendRegisterCode(EmailRequest request) {
         try {
-            BasicResponse response= checkMail(request);
+            BasicResponse response = checkMail(request);
             if (!response.isSuccess()) {
                 return response;
             }
@@ -114,9 +122,12 @@ public class RegisterService {
                 return registerFailure(validationErrorCode);
             }
             User user = createUser(request, emailFromToken);
-            if (dbManager.userExists(user.getUsername(), user.getEmail())) {
+            if (userRepository.userExists(user.getUsername(),user.getEmail())){
                 return registerFailure(ErrorCodes.USER_ALREADY_EXISTS);
             }
+//            if (dbManager.userExists(user.getUsername(), user.getEmail())) {
+//                return registerFailure(ErrorCodes.USER_ALREADY_EXISTS);
+//            }
             if (!ifInsertedNewUser(user)) {
                 return registerFailure(ErrorCodes.REGISTRATION_FAILED);
             }
@@ -147,7 +158,9 @@ public class RegisterService {
     }
 
     private Boolean ifInsertedNewUser(User user) {
-        return dbManager.createUserOnDb(user);
+//        return dbManager.createUserOnDb(user);
+        return userRepository.createUser(user);
+
     }
 
     private User createUser(RegisterCompleteRequest request, String email) {

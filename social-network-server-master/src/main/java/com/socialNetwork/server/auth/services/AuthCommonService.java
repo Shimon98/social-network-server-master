@@ -1,6 +1,7 @@
 package com.socialNetwork.server.auth.services;
 
 import com.socialNetwork.server.auth.database.DBManager;
+import com.socialNetwork.server.auth.database.UserRepository;
 import com.socialNetwork.server.auth.entity.User;
 import com.socialNetwork.server.auth.hashing.PasswordHashUtil;
 import com.socialNetwork.server.auth.security.JwtService;
@@ -12,8 +13,10 @@ import org.springframework.stereotype.Service;
 public class AuthCommonService {
     @Autowired
     private JwtService jwtService;
+//    @Autowired
+//    private DBManager dbManager;
     @Autowired
-     private DBManager dbManager;
+    private UserRepository userRepository;
 
     public String normalizeUsername(String username) {
         return username.trim();
@@ -47,21 +50,26 @@ public class AuthCommonService {
     public User extractUserFromToken(String token) {
         String usernameFromToken = jwtService.extractUsername(token);
         String normalizedUsername = normalizeUsername(usernameFromToken);
-        User user = dbManager.findUserByUsername(normalizedUsername);
+        User user = userRepository.findUserByUsername(normalizedUsername);
+//        User user = dbManager.findUserByUsername(normalizedUsername);
         return user;
     }
+
     public String extractEmailFromToken(String token) {
         String emailFromToken = jwtService.extractEmail(token);
         return emailFromToken;
     }
 
     public boolean validateToken(String token) {
-        if ( token == null) {
-            return false;}
+        if (token == null) {
+            return false;
+        }
         if (!jwtService.isTokenValid(token)) {
-            return false;     }
+            return false;
+        }
         if (!Constants.PENDING_LOGIN.equals(jwtService.extractTokenType(token))) {
-            return false;}
+            return false;
+        }
         return true;
     }
 
@@ -80,13 +88,12 @@ public class AuthCommonService {
         if (user == null) {
             return false;
         }
-        String emailFromToken =extractEmailFromToken(token);
+        String emailFromToken = extractEmailFromToken(token);
         if (!emailFromToken.equalsIgnoreCase(user.getEmail())) {
-            return  false;
+            return false;
         }
         return true;
     }
-
 }
 
 

@@ -2,6 +2,7 @@
 package com.socialNetwork.server.auth.services;
 
 import com.socialNetwork.server.auth.database.DBManager;
+import com.socialNetwork.server.auth.database.UserRepository;
 import com.socialNetwork.server.auth.email.EmailManager;
 import com.socialNetwork.server.auth.entity.User;
 import com.socialNetwork.server.auth.requests.LoginCodeAnswer;
@@ -24,19 +25,22 @@ import static com.socialNetwork.server.auth.utils.ConstantLogger.LOG_VERIFY_LOGI
 @Service
 public class LoginService {
     private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
+    private final UserRepository userRepository;
 
-    private DBManager dbManager;
+//    private DBManager dbManager;
     private TokenService tokenService;
     private AuthCommonService authCommonService;
     private EmailManager emailManager;
     private JwtService jwtService;
 
-    public LoginService(DBManager dbManager, TokenService tokenService, AuthCommonService authCommonService, EmailManager emailManager, JwtService jwtService) {
-        this.dbManager = dbManager;
+    public LoginService(TokenService tokenService, AuthCommonService authCommonService, EmailManager emailManager, JwtService jwtService, UserRepository userRepository) {
+//        this.dbManager = dbManager;
+        this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.authCommonService = authCommonService;
         this.emailManager = emailManager;
         this.jwtService = jwtService;
+
     }
 
     public PendingLoginResponse startLogin(LoginRequest request) {
@@ -62,7 +66,8 @@ public class LoginService {
         }
         String normalizedUsername = authCommonService.normalizeUsername(request.getUsername());
         String normalizedPassword = authCommonService.normalizePassword(request.getPassword());
-        User user = dbManager.findUserByUsername(normalizedUsername);
+        User user = userRepository.findUserByUsername(normalizedUsername);
+//        User user = dbManager.findUserByUsername(normalizedUsername);
         if (user == null) {
             return null;
         }
