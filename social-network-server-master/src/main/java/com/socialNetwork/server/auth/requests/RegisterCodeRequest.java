@@ -20,3 +20,6 @@ public class RegisterCodeRequest extends EmailRequest {
         this.code = code;
     }
 }
+
+
+

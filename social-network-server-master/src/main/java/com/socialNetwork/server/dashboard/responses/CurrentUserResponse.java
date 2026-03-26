@@ -11,6 +11,7 @@ public class CurrentUserResponse extends BasicResponse {
     }
 
     public CurrentUserResponse(boolean success, Integer errorCode) {
+        super(success, errorCode);
     }
 
     public CurrentUserResponse(boolean success, Integer errorCode, Long id, String username, String profilePicture) {

@@ -4,6 +4,7 @@ import com.socialNetwork.server.auth.requests.*;
 import com.socialNetwork.server.auth.responses.*;
 import com.socialNetwork.server.auth.services.AuthCookieService;
 import com.socialNetwork.server.auth.services.AuthManager;
+import com.socialNetwork.server.auth.utils.ErrorCodes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,22 +21,28 @@ public class    AuthController {
         this.authCookieService = authCookieService;
     }
 
-    @PostMapping ("/register/send-code")// ראשון
+//    @PostMapping("/register/check-email")
+//    public BasicResponse checkRegisterEmail(@RequestBody EmailRequest request) {
+//        return authManager.checkRegisterEmail(request);
+//    }
+
+
+    @PostMapping ("/register/send-code")
     public BasicResponse sendRegisterCode(@RequestBody EmailRequest request) {
         return authManager.sendRegisterCode(request);
     }
 
-    @PostMapping("/register/verify-code")// שני
+    @PostMapping("/register/verify-code")
     public RegisterCodeVerifyResponse verifyRegisterCode(@RequestBody RegisterCodeRequest request) {
         return authManager.verifyRegisterCode(request);
     }
 
-    @PostMapping("/register")// שלישי
+    @PostMapping("/register")
     public RegisterResponse register(@RequestBody RegisterCompleteRequest request) {
         return authManager.register(request);
     }
 
-    @PostMapping("/login") // ראשון
+    @PostMapping("/login")
     public BasicResponse login(@RequestBody LoginRequest request) {
         return authManager.startLogin(request);
     }
@@ -64,7 +71,7 @@ public class    AuthController {
         String newAccessToken = authManager.refreshAccessToken(refreshToken);
         if (newAccessToken == null) {
             authCookieService.clearAuthCookies(response);
-            return new BasicResponse(false, null);
+            return new BasicResponse(false, ErrorCodes.INVALID_TOKEN);
         }
         authCookieService.addAccessTokenCookie(response, newAccessToken);
         return new BasicResponse(true, null);

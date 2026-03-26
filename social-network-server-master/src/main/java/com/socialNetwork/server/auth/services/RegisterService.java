@@ -18,6 +18,7 @@ import com.socialNetwork.server.auth.validators.AuthValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import static com.socialNetwork.server.auth.utils.ConstantLogger.LOG_REGISTER_SEND_CODE_ERROR;
 import static com.socialNetwork.server.auth.utils.ConstantLogger.LOG_REGISTER_VERIFY_CODE_ERROR;
@@ -40,18 +41,41 @@ public class RegisterService {
     }
 
 
+    public BasicResponse checkMail(EmailRequest request) {
+        if (!validateEmail(request)) {
+            return new BasicResponse(false, ErrorCodes.REGISTRATION_FAILED);
+        }
+        if (!authEmail(request)) {
+            return new BasicResponse(false, ErrorCodes.USER_ALREADY_EXISTS);
+        }
+        return new BasicResponse(true, null);
+    }
+
+
+    private boolean validateEmail(EmailRequest request) {
+        if (request == null || request.getEmail() == null || request.getEmail().isBlank()) {
+            return false;}
+        return true;
+    }
+
+    private boolean authEmail(EmailRequest request) {
+        String normalizedEmail = authCommonService.normalizeEmail(request.getEmail());
+        if (dbManager.userExists("", normalizedEmail)) {
+            return false;
+        }
+        return true;
+    }
+
+
     public BasicResponse sendRegisterCode(EmailRequest request) {
         try {
-            if (request == null || request.getEmail() == null || request.getEmail().isBlank()) {
-                return new BasicResponse(false, ErrorCodes.REGISTRATION_FAILED);
+            BasicResponse response= checkMail(request);
+            if (!response.isSuccess()) {
+                return response;
             }
             String normalizedEmail = authCommonService.normalizeEmail(request.getEmail());
-            if (dbManager.userExists("", normalizedEmail)) {
-                return new BasicResponse(false, ErrorCodes.USER_ALREADY_EXISTS);
-            }
             emailManager.sendRegisterCode(normalizedEmail);
             return new BasicResponse(true, null);
-
         } catch (Exception e) {
             logger.error(LOG_REGISTER_SEND_CODE_ERROR, request.getEmail(), e);
             return new BasicResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR);
@@ -139,3 +163,4 @@ public class RegisterService {
         return new RegisterResponse(false, errorCode);
     }
 }
+

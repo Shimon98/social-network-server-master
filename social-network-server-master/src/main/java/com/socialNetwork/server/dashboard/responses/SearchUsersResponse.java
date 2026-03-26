@@ -11,7 +11,7 @@ public class SearchUsersResponse extends BasicResponse {
     }
 
     public SearchUsersResponse(boolean success, Integer errorCode) {
-        super();
+        super(success, errorCode);
     }
 
     public SearchUsersResponse(boolean success, Integer errorCode, List<UserPreviewResponse> users) {

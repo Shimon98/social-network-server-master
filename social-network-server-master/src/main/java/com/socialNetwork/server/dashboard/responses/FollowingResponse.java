@@ -12,6 +12,7 @@ public class FollowingResponse extends BasicResponse {
     public FollowingResponse() {
     }
     public FollowingResponse(boolean success, Integer errorCode) {
+        super(success, errorCode);
     }
 
     public FollowingResponse(boolean success, Integer errorCode, List<UserPreviewResponse> followingUsers) {
