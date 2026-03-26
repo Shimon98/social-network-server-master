@@ -43,6 +43,17 @@ Expected output:
 
 SUCCESS: Specified value was saved.
 
-### Step 3 – Restart IntelliJ
+
+
+
+### Step 3 - in powershell
+
+paste
+setx MAIL_USERNAME "sameEmail@gmail.com"
+setx MAIL_PASSWORD "same code"
+
+
+
+### Step 4 – Restart IntelliJ
 
 After setting the variable, restart IntelliJ so the application can read the new environment variable.
