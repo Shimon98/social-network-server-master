@@ -35,17 +35,13 @@ public class ErrorCodes {
     public static final int POST_DELETE_FAILURE = 7008; //"Failed to delete post"
     public static final int POST_DELETE_SUCCESS = 7009; //"Post deleted successfully"
     public static final int GET_FEED_SUCCESS = 7010;
+    public static final int GET_FEED_FAILURE = 7011;
 
     public static final int UNAUTHORIZED = 401;
     public static final int USER_NOT_FOUND = 4041;
     public static final int INVALID_POST = 4001;
     public static final int POST_NOT_FOUND = 4042;
     public static final int FORBIDDEN = 4031;
-
-
-
-
-
 
 
 

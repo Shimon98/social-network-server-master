@@ -288,7 +288,7 @@ public class DBManager {
 
     public List<PostResponse> getFeedPosts(Long currentUserId) {
         List<PostResponse> posts = new ArrayList<>();
-        String sql = "SELECT p.id, p.content, p.created_at, u.username, u.profile_image_url " +
+        String sql = "SELECT p.id, p.user_id, p.content, p.created_at, u.username, u.profile_image_url " +
                 "FROM posts p " +
                 "JOIN users u ON p.user_id = u.id " +
                 "WHERE p.user_id = ? " +
@@ -304,9 +304,11 @@ public class DBManager {
             statement.setLong(1, currentUserId);
             statement.setLong(2, currentUserId);
             ResultSet resultSet = statement.executeQuery();
+
             while (resultSet.next()) {
                 PostResponse post = new PostResponse();
                 post.setId(resultSet.getLong("id"));
+                post.setUserId(resultSet.getLong("user_id"));
                 post.setContent(resultSet.getString("content"));
                 post.setCreatedAt(resultSet.getTimestamp("created_at"));
                 post.setUsername(resultSet.getString("username"));
@@ -355,7 +357,7 @@ public class DBManager {
     @Cacheable(value = "userPosts", key = "#userId", unless = "#result == null")
     public List<PostResponse> getPostsByUserId(Long userId) {
         List<PostResponse> posts = new ArrayList<>();
-        String sql = "SELECT p.id, p.content, p.created_at, u.username, u.profile_image_url " +
+        String sql = "SELECT p.id, p.user_id, p.content, p.created_at, u.username, u.profile_image_url " +
                 "FROM posts p " +
                 "JOIN users u ON p.user_id = u.id " +
                 "WHERE p.user_id = ? " +
@@ -367,6 +369,7 @@ public class DBManager {
             while (resultSet.next()) {
                 PostResponse post = new PostResponse();
                 post.setId(resultSet.getLong("id"));
+                post.setUserId(resultSet.getLong("user_id"));
                 post.setContent(resultSet.getString("content"));
                 post.setCreatedAt(resultSet.getTimestamp("created_at"));
                 post.setUsername(resultSet.getString("username"));
@@ -380,5 +383,17 @@ public class DBManager {
             logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage(), e);
             return null;
         }
+    }
+    public boolean userExistsById(Long userId) {
+        String sql = "SELECT 1 FROM users WHERE id = ?";
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sql);
+            statement.setLong(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            logger.error(ConstantLogger.LOG_DB_UNEXPECTED_ERROR, e.getMessage(), e);
+        }
+        return false;
     }
 }

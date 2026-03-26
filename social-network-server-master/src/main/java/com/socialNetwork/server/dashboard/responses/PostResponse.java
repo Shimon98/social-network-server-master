@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 
 public class PostResponse extends BasicResponse {
     private Long id;
+    private Long userId;
     private String content;
     private Timestamp createdAt;
     private String username;
@@ -14,9 +15,11 @@ public class PostResponse extends BasicResponse {
     public PostResponse() {
     }
 
-    public PostResponse(boolean success, Integer errorCode, Long id, String content, Timestamp createdAt, String username, String profilePicture) {
-        super(success,errorCode);
+    public PostResponse(boolean success, Integer errorCode, Long id, Long userId,
+                        String content, Timestamp createdAt, String username, String profilePicture) {
+        super(success, errorCode);
         this.id = id;
+        this.userId = userId;
         this.content = content;
         this.createdAt = createdAt;
         this.username = username;
@@ -29,6 +32,14 @@ public class PostResponse extends BasicResponse {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getContent() {

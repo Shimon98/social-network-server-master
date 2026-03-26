@@ -90,4 +90,14 @@ public class DashboardController {
             return new FeedResponse(false, ErrorCodes.UNAUTHORIZED, null);
         }
     }
+    @GetMapping("/users/{userId}/posts")
+    public FeedResponse getUserPosts(@PathVariable Long userId,
+                                     HttpServletRequest request) {
+        try {
+            Long currentUserId = currentUserService.extractCurrentUserId(request);
+            return postService.getUserPosts(currentUserId, userId);
+        } catch (RuntimeException e) {
+            return new FeedResponse(false, ErrorCodes.UNAUTHORIZED, null);
+        }
+    }
 }

@@ -54,4 +54,22 @@ public class PostService {
         List<PostResponse> posts = dbManager.getPostsByUserId(currentUserId);
         return new FeedResponse(true, null, posts);
     }
+    public FeedResponse getUserPosts(Long currentUserId, Long userId) {
+        if (currentUserId == null || userId == null) {
+            return new FeedResponse(false, ErrorCodes.GET_FEED_FAILURE, null);
+        }
+
+        boolean allowed = currentUserId.equals(userId) || dbManager.isFollowing(currentUserId, userId);
+        if (!allowed) {
+            return new FeedResponse(false, ErrorCodes.GET_FEED_FAILURE, null);
+        }
+
+        boolean userExists = dbManager.userExistsById(userId);
+        if (!userExists) {
+            return new FeedResponse(false, ErrorCodes.GET_FEED_FAILURE, null);
+        }
+
+        List<PostResponse> posts = dbManager.getPostsByUserId(userId);
+        return new FeedResponse(true, null, posts);
+    }
 }
