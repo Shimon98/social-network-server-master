@@ -26,11 +26,10 @@ import static com.socialNetwork.server.auth.utils.Constants.PENDING_REGISTER;
 @Service
 public class RegisterService {
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
-    private final UserRepository userRepository;
-
-    private AuthCommonService authCommonService;
-    private EmailManager emailManager;
-    private JwtService jwtService;
+    private final UserRepository userRepository;   
+    private final AuthCommonService authCommonService;
+    private final EmailManager emailManager;
+    private final JwtService jwtService;
 
     public RegisterService(AuthCommonService authCommonService, EmailManager emailManager, JwtService jwtService, UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -60,7 +59,7 @@ public class RegisterService {
 
     private boolean authEmail(EmailRequest request) {
         String normalizedEmail = authCommonService.normalizeEmail(request.getEmail());
-        if (userRepository.userExists("", normalizedEmail)) {
+        if (userRepository.userExistsByEmail(normalizedEmail)) {
             return false;
         }
         return true;

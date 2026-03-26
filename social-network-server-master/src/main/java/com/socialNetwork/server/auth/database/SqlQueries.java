@@ -32,6 +32,9 @@ public final class SqlQueries {
     public static final String USER_EXISTS_BY_ID =
             "SELECT 1 FROM users WHERE id = ?";
 
+    public static final String USER_EXISTS_BY_EMAIL =
+            "SELECT 1 FROM users WHERE email = ?";
+
     public static final String INSERT_REFRESH_TOKEN =
             "INSERT INTO refresh_tokens (user_id, token, expires_at, created_at) VALUES (?, ?, ?, ?)";
 

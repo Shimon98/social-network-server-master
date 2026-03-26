@@ -18,7 +18,7 @@ public class DashboardService {
     public CurrentUserResponse getCurrentUser(Long currentUserId) {
         User user = userRepository.findUserById(currentUserId);
         if (user == null) {
-            return null;
+            return new CurrentUserResponse(false, ErrorCodes.USER_NOT_FOUND);
         }
         return new CurrentUserResponse(
                 true,

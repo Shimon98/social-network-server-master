@@ -25,12 +25,11 @@ import static com.socialNetwork.server.auth.utils.ConstantLogger.LOG_VERIFY_LOGI
 public class LoginService {
     private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
     private final UserRepository userRepository;
-
-    private TokenService tokenService;
-    private AuthCommonService authCommonService;
-    private EmailManager emailManager;
-    private JwtService jwtService;
-
+    private final TokenService tokenService;
+    private final AuthCommonService authCommonService;
+    private final EmailManager emailManager;
+    private final JwtService jwtService;
+    
     public LoginService(TokenService tokenService, AuthCommonService authCommonService, EmailManager emailManager, JwtService jwtService, UserRepository userRepository) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
