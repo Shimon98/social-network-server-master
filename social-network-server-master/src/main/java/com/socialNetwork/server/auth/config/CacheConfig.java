@@ -1,6 +1,7 @@
 package com.socialNetwork.server.auth.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.socialNetwork.server.auth.utils.Constants;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,7 @@ public class CacheConfig {
         CaffeineCacheManager manager =
                 new CaffeineCacheManager("users",
                         "verificationCodes",
-                        "userPosts"
+                        "userPosts", Constants.BLOCK_SERVICE_NAME
                 );
 
         manager.setCaffeine(

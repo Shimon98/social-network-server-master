@@ -87,4 +87,21 @@ public final class SqlQueries {
                     "JOIN users u ON p.user_id = u.id " +
                     "WHERE p.user_id = ? " +
                     "ORDER BY p.created_at DESC";
+
+
+
+
+
+
+
+    public static final String IS_USER_BLOCKED =
+            "SELECT 1 FROM blocked_users WHERE user_id = ?";
+
+    public static final String INSERT_BLOCKED_USER =
+            "INSERT INTO blocked_users (user_id) VALUES (?)";
+
+    public static final String DELETE_BLOCKED_USER =
+            "DELETE FROM blocked_users WHERE user_id = ?";
+
 }
+

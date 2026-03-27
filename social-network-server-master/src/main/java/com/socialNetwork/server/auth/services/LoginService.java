@@ -29,30 +29,80 @@ public class LoginService {
     private final AuthCommonService authCommonService;
     private final EmailManager emailManager;
     private final JwtService jwtService;
+    private final BlockManager blockManager;
     
-    public LoginService(TokenService tokenService, AuthCommonService authCommonService, EmailManager emailManager, JwtService jwtService, UserRepository userRepository) {
+    public LoginService(TokenService tokenService, AuthCommonService authCommonService, EmailManager emailManager, JwtService jwtService, UserRepository userRepository, BlockManager blockManager) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.authCommonService = authCommonService;
         this.emailManager = emailManager;
         this.jwtService = jwtService;
+        this.blockManager=blockManager;
     }
 
     public PendingLoginResponse startLogin(LoginRequest request) {
+        if(!validateLoginRequest(request)){
+            return failureToLogin(ErrorCodes.INVALID_CREDENTIALS);
+        }
         try {
-            User user = getValidUserForLogin(request);
-            if (user == null) {
-                return new PendingLoginResponse(false, ErrorCodes.INVALID_CREDENTIALS, null);
+            User user =getUserFromDB(request);
+            if (user ==null){
+                return failureToLogin(ErrorCodes.INVALID_CREDENTIALS);
             }
+            if (blockManager.isUserBlocked(user)) {
+                return failureToLogin(ErrorCodes.INVALID_CREDENTIALS);
+            }
+            if (!ifPasswordHashMaths(request,user)){
+                boolean blockedNow = blockManager.handleFailedLogin(user);
+                if (blockedNow) {
+                    return failureToLogin(ErrorCodes.USER_BLOCKED);
+                }
+                return failureToLogin(ErrorCodes.INVALID_CREDENTIALS);
+            }
+            blockManager.handleSuccessfulLogin(user);
             String pendingLoginToken = jwtService.generatePendingLoginToken(user.getId(), user.getUsername(),
-                    user.getEmail()
-            );
+                    user.getEmail());
             return new PendingLoginResponse(true, null, pendingLoginToken);
         } catch (Exception e) {
             logger.error(ConstantLogger.LOG_LOGIN_FAILED_USERNAME, request.getUsername(), e);
         }
-        return new PendingLoginResponse(false, ErrorCodes.INTERNAL_SERVER_ERROR, null);
+        return failureToLogin(ErrorCodes.INTERNAL_SERVER_ERROR);
     }
+
+
+
+    private PendingLoginResponse failureToLogin(Integer errorCode){
+        return new PendingLoginResponse(false, errorCode, null);
+    }
+
+    private boolean validateLoginRequest(LoginRequest request){
+        Integer validationErrorCode = AuthValidator.validateLoginRequest(request);
+        if (validationErrorCode != null) {
+            return false;
+        }
+        return true;
+    }
+
+    private User getUserFromDB(LoginRequest request){
+        String normalizedUsername = authCommonService.normalizeUsername(request.getUsername());
+        User user = userRepository.findUserByUsername(normalizedUsername);
+        return user;
+    }
+
+    private boolean ifPasswordHashMaths(LoginRequest request, User user){
+        String normalizedPassword = authCommonService.normalizePassword(request.getPassword());
+        String normalizedUsername = authCommonService.normalizeUsername(request.getUsername());
+        return authCommonService.isPasswordMatch(normalizedUsername, normalizedPassword,
+                user.getPasswordHash());
+    }
+
+
+
+
+
+
+
+
 
     private User getValidUserForLogin(LoginRequest request) {
         Integer validationErrorCode = AuthValidator.validateLoginRequest(request);
@@ -72,6 +122,10 @@ public class LoginService {
         }
         return user;
     }
+
+
+
+
 
     public BasicResponse sendLoginCode(LoginCodeRequest request) {
         if (request == null) {

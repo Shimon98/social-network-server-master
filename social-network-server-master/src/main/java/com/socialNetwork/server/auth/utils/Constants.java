@@ -35,7 +35,6 @@ public class Constants {
     public static final String PENDING_LOGIN = "pending_login";
     public static final String PENDING_REGISTER = "pending_register";
 
-    public static final String BLOCK_SERVICE_NAME = "";
 
     public static final String USER_ID = "userId";
     public static final String EMAIL = "email";
@@ -45,7 +44,8 @@ public class Constants {
     public static final String FORMAT = "%02x";
     public static final String HASH_ERROR = "Hash error";
 
-
+    public static final String BLOCK_SERVICE_NAME = "loginAttempts";
+    public static final int LOGIN_MAX_ATTEMPTS = 5;
 
 
 

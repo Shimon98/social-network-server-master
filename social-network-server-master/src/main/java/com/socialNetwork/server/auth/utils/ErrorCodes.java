@@ -44,5 +44,5 @@ public class ErrorCodes {
     public static final int FORBIDDEN = 4031;
 
 
-
+    public static final Integer USER_BLOCKED =2010 ;
 }
