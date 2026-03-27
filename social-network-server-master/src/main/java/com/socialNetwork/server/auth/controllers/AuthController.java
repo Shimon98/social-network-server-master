@@ -21,10 +21,10 @@ public class    AuthController {
         this.authCookieService = authCookieService;
     }
 
-//    @PostMapping("/register/check-email")
-//    public BasicResponse checkRegisterEmail(@RequestBody EmailRequest request) {
-//        return authManager.checkRegisterEmail(request);
-//    }
+    @PostMapping("/register/check-email")
+    public BasicResponse checkRegisterEmail(@RequestBody EmailRequest request) {
+        return authManager.checkRegisterEmail(request);
+    }
 
 
     @PostMapping ("/register/send-code")
