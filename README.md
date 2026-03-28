@@ -15,9 +15,11 @@ CREATE DATABASE social_network_db;
 ```
 
 2. Run:
+```bash
 db/schema.sql
+```
 
-3. Update application.properties (if needed)
+3. Update `application.properties` (if needed)
 
 4. Run the Spring Boot project
 
@@ -40,7 +42,7 @@ Yeah… you still have to handle that yourself 💀
 
 ## 🔐 Important
 
-❗ The server will NOT start correctly unless JWT_SECRET is defined
+❗ The server will NOT start correctly unless `JWT_SECRET` is defined
 
 ---
 
@@ -53,9 +55,11 @@ Each developer must generate their own secret locally and store it as an environ
 
 The application reads the secret from:
 
+```properties
 jwt.secret=${JWT_SECRET}
+```
 
-in application.properties.
+in `application.properties`.
 
 ---
 
@@ -63,11 +67,17 @@ in application.properties.
 
 Open Windows PowerShell and run:
 
+```powershell
+
 [Convert]::ToBase64String((1..32 | ForEach-Object {Get-Random -Maximum 256}))
+
+```
 
 Example output:
 
+```
 QuSRmPD2CuH+40rID1JoGs93GT7ph0vM0ri3Z0ymBL8=
+```
 
 Copy the generated string.
 
@@ -75,14 +85,19 @@ Copy the generated string.
 
 ### Step 2 – Set the JWT_SECRET environment variable
 
-Paste the generated String in PowerShell ->
+Paste the generated string in PowerShell:
+
+```powershell
 
 setx JWT_SECRET QuSRmPD2CuH+40rID1JoGs93GT7ph0vM0ri3Z0ymBL8=
 
+```
 
 Expected output:
 
+```
 SUCCESS: Specified value was saved.
+```
 
 ---
 
@@ -92,24 +107,25 @@ SUCCESS: Specified value was saved.
 You cannot use your regular Gmail password.  
 You must generate an App Password from Google.
 
-Step 1 – Enable 2-Step Verification  
+### Step 1 – Enable 2-Step Verification
 Go to: https://myaccount.google.com/security
 
-Step 2 – Generate App Password  
+### Step 2 – Generate App Password
 Go to: https://myaccount.google.com/apppasswords
 
-- Select Mail  
-- Select Other / Windows Computer  
-- Click Generate  
+- Select **Mail**
+- Select **Other / Windows Computer**
+- Click **Generate**
 - Copy the generated password
 
-Step 3 – Set environment variables
-Paste the following commands in PowerShell with your own data(email + generated password) ->
+### Step 3 – Set environment variables
 
+Paste the following commands in PowerShell:
 
+```powershell
 setx MAIL_USERNAME "yourEmail@gmail.com"
 setx MAIL_PASSWORD "your_generated_app_password"
-
+```
 
 ---
 
@@ -117,7 +133,7 @@ setx MAIL_PASSWORD "your_generated_app_password"
 
 After setting the variables:
 
-Restart IntelliJ so the application can read them.
+👉 Restart IntelliJ so the application can read them.
 
 ---
 
@@ -125,7 +141,9 @@ Restart IntelliJ so the application can read them.
 
 Run:
 
+```
 SocialNetworkServerApplication
+```
 
 ---
 
@@ -133,10 +151,18 @@ SocialNetworkServerApplication
 
 If something doesn’t work:
 
-- Make sure MySQL is running  
-- Make sure database exists  
-- Make sure environment variables are set  
+- Make sure MySQL is running
+- Make sure database exists
+- Make sure environment variables are set
 - Restart IntelliJ (yes… again 😅)
+
+---
+
+## 🔗 Full Application
+
+To run the full application, you also need to run the client-side project:
+
+👉 https://github.com/diana-ab/social-network-client.git
 
 ---
 
@@ -144,8 +170,5 @@ If something doesn’t work:
 
 If it works — you're a genius 🎉  
 If it doesn’t — welcome to backend development 🫠
-
-To run the full application, you also need to run the client-side project:
-https://github.com/diana-ab/social-network-client.git
 
 Enjoy building **The Empire** 👑
