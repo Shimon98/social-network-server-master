@@ -1,5 +1,4 @@
 create table if not exists users
-
 (
     id                bigint auto_increment
         primary key,
@@ -11,6 +10,14 @@ create table if not exists users
         unique (email),
     constraint username
         unique (username)
+);
+
+create table if not exists blocked_users
+(
+    user_id bigint not null
+        primary key,
+    constraint blocked_users_ibfk_1
+        foreign key (user_id) references users (id)
 );
 
 create table if not exists follows
@@ -38,7 +45,7 @@ create table if not exists posts
             on delete cascade
 );
 
-create index  posts_user_id_created_at_index
+create index posts_user_id_created_at_index
     on posts (user_id, created_at);
 
 create table if not exists refresh_tokens
