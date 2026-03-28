@@ -145,4 +145,7 @@ If something doesn’t work:
 If it works — you're a genius 🎉  
 If it doesn’t — welcome to backend development 🫠
 
+To run the full application, you also need to run the client-side project:
+https://github.com/diana-ab/social-network-client.git
+
 Enjoy building **The Empire** 👑
