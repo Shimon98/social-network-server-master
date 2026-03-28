@@ -17,7 +17,7 @@ public abstract class BaseRepository {
         this.connectionProvider = connectionProvider;
     }
 
-    protected boolean executeUpdate(Logger logger, String sql, Object... params) {//object...params זה פשוט דרך להגיד שזה מתודה שמקבלת מס' לא ידוע של פרמטרים זה בעצם מערך של אובצ'קט שאתה לא יודע כמה נכנס אליו
+    protected boolean executeUpdate(Logger logger, String sql, Object... params) {
         try (Connection connection = connectionProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             setParameters(statement, params);
@@ -91,7 +91,7 @@ public abstract class BaseRepository {
         }
     }
 
-    private void setParameters(PreparedStatement statement, Object... params) throws SQLException { //זה בעצם הכנסה של הפרמטרים של אובצ'קט בתוך הסימני שאלה של השאילתה שאנחנו שולחים למסד נתונים לדוגמה: יש שאילתה עם ? אחד אז מערך הפרמטרים יהיה באורך 1 לכן נציב ב- statment.setObject(1,param)
+    private void setParameters(PreparedStatement statement, Object... params) throws SQLException {
         if (params == null) {
             return;
         }
